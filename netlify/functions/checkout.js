@@ -33,7 +33,7 @@ exports.handler = async event => {
     order_id: orderId, box_id: b.box, box_name: box.name, box_price: box.price, delivery_fee: q.fee, delivery_provider: q.provider, delivery_label: q.label || '', quote_ref: q.ref || null,
     buyer_name: clean(b.buyer_name), buyer_phone: clean(b.buyer_phone, 20), buyer_email: email,
     recipient_name: clean(b.recipient_name), recipient_phone: clean(b.recipient_phone, 20),
-    address: clean(b.address), address_extra: clean(b.address_extra), lat: lat ?? null, lng: lng ?? null, zone: clean(b.zone, 20),
+    address: clean(b.address), address_extra: clean(b.address_extra), lat: lat ?? null, lng: lng ?? null, zone: clean(b.zone, 60),
     date: clean(b.date, 10), slot: clean(b.slot, 40), backup_contact: clean(b.backup_contact, 20),
     card_message: clean(b.card_message, 280), instructions: clean(b.instructions, 280),
   };
@@ -57,6 +57,7 @@ exports.handler = async event => {
     });
     return json(200, { access_code: data.access_code, reference: data.reference, order_id: orderId, total });
   } catch (e) {
-    return json(502, { message: 'We could not start the payment. Please try again or chat with us.' });
+    console.error('paystack initialize failed:', e.message);
+    return json(502, { message: `Paystack could not start the payment (${e.message}). Please try again or chat with us.` });
   }
 };

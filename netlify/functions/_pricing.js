@@ -21,6 +21,7 @@ const P = {
   max: num(process.env.DELIVERY_MAX, 12000),
   maxKm: num(process.env.DELIVERY_MAX_KM, 45),
 };
+const AREAS = require('./_areas.json');
 const ZONES = {
   mainland: { name: 'Mainland', fee: 3000 },
   island: { name: 'Island', fee: 4500 },
@@ -72,8 +73,10 @@ async function quote({ lat, lng, address, zone }) {
     if (!inLagos(lat, lng)) return estimate(lat, lng, h);
     return (await chowdeckQuote({ lat, lng, address }, h)) || estimate(lat, lng, h);
   }
+  const area = zone && AREAS.find(a => a.id === zone);
+  if (area) return { ok: true, fee: area.fee, label: area.name, provider: 'area' };
   if (zone && ZONES[zone]) return { ok: true, fee: ZONES[zone].fee, label: ZONES[zone].name, provider: 'zone' };
   return { ok: false, message: 'Add the delivery address so we can work out the delivery fee.' };
 }
 
-module.exports = { quote, ZONES, hub };
+module.exports = { quote, ZONES, AREAS, hub };

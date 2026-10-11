@@ -47,8 +47,8 @@ a{color:inherit}
 @keyframes bob{50%{transform:translate(-50%,-58%)}}
 #loader .bar{position:absolute;left:0;top:0;height:3px;width:0;background:var(--lime)}
 
-.nav{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:40;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px clamp(16px,4vw,40px);transition:background .35s}
-.nav.solid{background:rgba(15,30,12,.8);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.nav{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:40;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px clamp(16px,4vw,40px);transition:background .35s,box-shadow .35s}
+.nav.solid{background:rgba(15,30,12,.62);-webkit-backdrop-filter:saturate(1.4) blur(18px);backdrop-filter:saturate(1.4) blur(18px);box-shadow:0 1px 0 rgba(255,255,255,.06)}
 .brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:20px;text-decoration:none}
 .brand img{height:30px;width:auto;display:block}
 .nav-links{display:flex;align-items:center;gap:26px;font-size:14px;font-weight:500}
@@ -351,6 +351,19 @@ gmp-place-autocomplete{width:100%;color-scheme:light}
 }
 .f-mail{color:var(--mist);text-decoration:none;transition:color .2s}
 .f-mail:hover{color:var(--lime)}
+
+/* checkout fields: one consistent size and look on every browser (incl. iPhone Safari) */
+.co input:not([type=checkbox]),.co select{-webkit-appearance:none;appearance:none;display:block;width:100%;height:48px;min-height:48px;margin:0;padding:0 14px;border-radius:12px;font:inherit;font-size:16px;line-height:46px;color:var(--ink);background-color:#fff;border:1px solid rgba(22,38,15,.2);box-sizing:border-box;box-shadow:none}
+.co select{padding-right:40px;text-overflow:ellipsis;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%2316260F' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 15px center;background-size:12px 8px}
+.co select:invalid,.co select option[value=""]{color:#7a8470}
+.co input[type=date]{text-align:left;line-height:normal;padding-top:0;padding-bottom:0}
+.co input[type=date]::-webkit-date-and-time-value{text-align:left;margin:0;line-height:46px}
+.co input[type=date]::-webkit-calendar-picker-indicator{opacity:.55;cursor:pointer}
+.co textarea{-webkit-appearance:none;appearance:none;display:block;width:100%;min-height:96px;padding:12px 14px;border-radius:12px;font:inherit;font-size:16px;line-height:1.45;border:1px solid rgba(22,38,15,.2);background:#fff;box-sizing:border-box;box-shadow:none}
+.co input::placeholder,.co textarea::placeholder{color:#9aa391}
+.co input:not([type=checkbox]):focus,.co select:focus,.co textarea:focus{outline:2px solid var(--lime);outline-offset:1px;border-color:var(--forest)}
+.co input[aria-invalid="true"],.co select[aria-invalid="true"],.co textarea[aria-invalid="true"]{border-color:#C2412D;background-color:#FFF6F4}
+.co label{gap:6px}
 </style>
 
 <div id="loader" aria-hidden="true"><i class="bar" id="lbar"></i><img class="lmark" src="img/mark-yellow.png" alt=""><span class="count" id="lcount">0</span><span class="lbl">Packing your box</span></div>
@@ -460,8 +473,8 @@ gmp-place-autocomplete{width:100%;color-scheme:light}
         </div>
       </fieldset>
       <fieldset><legend>Delivery</legend>
-        <div class="co-addr"><label for="co_addr">Delivery address</label><div class="ac-wrap" id="coAddrWrap"><input id="co_addr" name="address" autocomplete="off" placeholder="Start typing, e.g. 7b Aderemi Akeju" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="coAc" required><ul class="ac" id="coAc" role="listbox" hidden></ul></div><small class="co-hint" id="coAddrHint" hidden></small></div>
-        <label id="coZoneWrap" hidden>Area<select id="co_zone" name="zone"></select></label>
+        <label id="coZoneWrap">Area<select id="co_zone" name="zone" required></select></label>
+        <div class="co-addr"><label for="co_addr">Street address</label><div class="ac-wrap" id="coAddrWrap"><input id="co_addr" name="address" autocomplete="street-address" placeholder="House number and street, e.g. 7b Aderemi Akeju Street" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="coAc" required><ul class="ac" id="coAc" role="listbox" hidden></ul></div><small class="co-hint" id="coAddrHint" hidden></small></div>
         <label>Apartment, gate, landmark <small>optional</small><input id="co_addr2" name="address_extra" placeholder="Flat 4B, blue gate opposite the pharmacy"></label>
         <div class="f2">
           <label>Delivery date<input id="co_date" name="date" type="date" required></label>
@@ -533,12 +546,8 @@ const CHECKOUT = {
   hub: { lat: 6.6018, lng: 3.3515 },  // where boxes leave from (placeholder: Ikeja)
   // fallback pricing when no live quote is available (keep in sync with netlify/functions/_pricing.js)
   pricing: { base: 2000, baseKm: 5, perKm: 250, max: 12000, maxKm: 45 },
-  zones: [
-    { id: 'mainland', name: 'Mainland (Ikeja, Yaba, Surulere, Gbagada, Maryland)', fee: 3000 },
-    { id: 'island', name: 'Island (VI, Ikoyi, Lekki Phase 1, Oniru)', fee: 4500 },
-    { id: 'lekki', name: 'Lekki to Ajah (Chevron, VGC, Sangotedo)', fee: 6000 },
-    { id: 'outer', name: 'Outer Lagos (Ikorodu, Badagry, Epe, Alagbado)', fee: 8000 },
-  ],
+  // Lagos delivery areas and fees (same list as netlify/functions/_areas.json; edit both together)
+  areas: [{"id":"ikeja-allen-opebi-toyin","name":"Ikeja (Allen, Opebi, Toyin)","group":"Ikeja & North","fee":2000},{"id":"ikeja-gra","name":"Ikeja GRA","group":"Ikeja & North","fee":2000},{"id":"alausa-agidingbi","name":"Alausa / Agidingbi","group":"Ikeja & North","fee":2000},{"id":"oregun","name":"Oregun","group":"Ikeja & North","fee":2000},{"id":"ogba-oke-ira","name":"Ogba / Oke-Ira","group":"Ikeja & North","fee":2000},{"id":"agege","name":"Agege","group":"Ikeja & North","fee":2500},{"id":"ojodu-berger","name":"Ojodu / Berger","group":"Ikeja & North","fee":2500},{"id":"omole-olowora","name":"Omole / Olowora","group":"Ikeja & North","fee":2500},{"id":"magodo","name":"Magodo","group":"Ikeja & North","fee":2500},{"id":"isheri-olowora","name":"Isheri / Olowora","group":"Ikeja & North","fee":3500},{"id":"ikosi-ketu","name":"Ikosi / Ketu","group":"Ikeja & North","fee":2500},{"id":"ojota-ogudu","name":"Ojota / Ogudu","group":"Ikeja & North","fee":2500},{"id":"maryland-anthony","name":"Maryland / Anthony","group":"Ikeja & North","fee":2500},{"id":"abule-egba-ijaiye","name":"Abule Egba / Ijaiye","group":"Ikeja & North","fee":3500},{"id":"alagbado-iyana-ipaja","name":"Alagbado / Iyana Ipaja","group":"Ikeja & North","fee":4500},{"id":"gbagada","name":"Gbagada","group":"Central Mainland","fee":3500},{"id":"ilupeju-palmgrove","name":"Ilupeju / Palmgrove","group":"Central Mainland","fee":3000},{"id":"shomolu-bariga","name":"Shomolu / Bariga","group":"Central Mainland","fee":3500},{"id":"oshodi","name":"Oshodi","group":"Central Mainland","fee":3000},{"id":"mushin","name":"Mushin","group":"Central Mainland","fee":4000},{"id":"yaba-akoka","name":"Yaba / Akoka","group":"Central Mainland","fee":4500},{"id":"surulere","name":"Surulere","group":"Central Mainland","fee":5000},{"id":"ebute-metta","name":"Ebute Metta","group":"Central Mainland","fee":5500},{"id":"isolo-ajao-estate","name":"Isolo / Ajao Estate","group":"Central Mainland","fee":3500},{"id":"okota","name":"Okota","group":"Central Mainland","fee":4500},{"id":"ikotun-igando","name":"Ikotun / Igando","group":"Central Mainland","fee":5000},{"id":"egbeda-idimu","name":"Egbeda / Idimu","group":"Central Mainland","fee":3500},{"id":"lagos-island-cms-marina","name":"Lagos Island (CMS, Marina)","group":"Island","fee":6500},{"id":"ikoyi","name":"Ikoyi","group":"Island","fee":7500},{"id":"banana-island","name":"Banana Island","group":"Island","fee":7500},{"id":"victoria-island","name":"Victoria Island","group":"Island","fee":8000},{"id":"oniru","name":"Oniru","group":"Island","fee":8500},{"id":"eko-atlantic","name":"Eko Atlantic","group":"Island","fee":8500},{"id":"apapa","name":"Apapa","group":"Island","fee":6500},{"id":"lekki-phase-1","name":"Lekki Phase 1","group":"Lekki & Ajah","fee":8500},{"id":"ikate-elegushi","name":"Ikate / Elegushi","group":"Lekki & Ajah","fee":9000},{"id":"agungi-idado","name":"Agungi / Idado","group":"Lekki & Ajah","fee":9500},{"id":"osapa-london-jakande","name":"Osapa London / Jakande","group":"Lekki & Ajah","fee":10000},{"id":"chevron-ikota","name":"Chevron / Ikota","group":"Lekki & Ajah","fee":10500},{"id":"vgc","name":"VGC","group":"Lekki & Ajah","fee":10500},{"id":"ajah","name":"Ajah","group":"Lekki & Ajah","fee":10500},{"id":"abraham-adesanya-thomas-estate","name":"Abraham Adesanya / Thomas Estate","group":"Lekki & Ajah","fee":11500},{"id":"sangotedo","name":"Sangotedo","group":"Lekki & Ajah","fee":12500},{"id":"awoyaya","name":"Awoyaya","group":"Lekki & Ajah","fee":15000},{"id":"festac-amuwo-odofin","name":"Festac / Amuwo Odofin","group":"Outer Lagos","fee":6500},{"id":"satellite-town","name":"Satellite Town","group":"Outer Lagos","fee":8000},{"id":"ojo","name":"Ojo","group":"Outer Lagos","fee":9500},{"id":"ikorodu","name":"Ikorodu","group":"Outer Lagos","fee":7000},{"id":"ibeju-lekki","name":"Ibeju-Lekki","group":"Outer Lagos","fee":15000},{"id":"epe","name":"Epe","group":"Outer Lagos","fee":15000},{"id":"badagry","name":"Badagry","group":"Outer Lagos","fee":15000}],
 };
 const DELIVERY = {
   fee: null,                          // e.g. 3500 for a flat fee; null = confirmed on WhatsApp
@@ -563,6 +572,9 @@ document.getElementById('rail').innerHTML = COLLECTION.map((b, i) => `
   const views = { info: document.querySelector('.mdl-body:not(.co):not(.co-done)'), co: $('coForm'), done: $('coDone') };
   const show = v => { const c = m.querySelector('.mdl-card'); Object.entries(views).forEach(([k, el]) => { el.hidden = k !== v; el.scrollTop = 0; }); c.scrollTop = 0; c.dataset.view = v; };
   const wa = msg => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+  const PREVIEW = !/^https?:$/.test(location.protocol) || /claude|anthropic|usercontent|localhost|127\.0\.0\.1/.test(location.hostname);
+  // phones: open WhatsApp in the same tab (new tabs to wa.me get blocked by some in-app browsers)
+  if (matchMedia('(hover: none)').matches) ['mdlChat', 'coDoneChat'].forEach(id => $(id).removeAttribute('target'));
   let last = null, box = null, quote = null, mapsReady = null, place = null;
 
   /* ---------------- info view ---------------- */
@@ -603,7 +615,10 @@ document.getElementById('rail').innerHTML = COLLECTION.map((b, i) => `
     $('coTitle').textContent = 'Send the ' + box.name.replace(/^The /, '');
     const md = minDate(); $('co_date').min = ymd(md); if (!$('co_date').value || $('co_date').value < ymd(md)) $('co_date').value = ymd(md);
     $('co_slot').innerHTML = slotsFor(box).map(s => `<option>${s}</option>`).join('');
-    $('co_zone').innerHTML = '<option value="">Choose the area</option>' + CHECKOUT.zones.map(z => `<option value="${z.id}">${esc(z.name)} · ${naira(z.fee)}</option>`).join('');
+    if (!$('co_zone').options.length) {
+      const groups = [...new Set(CHECKOUT.areas.map(a => a.group))];
+      $('co_zone').innerHTML = '<option value="">Choose your area</option>' + groups.map(g => `<optgroup label="${esc(g)}">` + CHECKOUT.areas.filter(a => a.group === g).map(a => `<option value="${a.id}">${esc(a.name)} · ${naira(a.fee)}</option>`).join('') + '</optgroup>').join('');
+    }
     $('coErr').hidden = true;
     setupAddress();
     renderSum();
@@ -645,10 +660,10 @@ document.getElementById('rail').innerHTML = COLLECTION.map((b, i) => `
   }
   function useZones() {
     $('coZoneWrap').hidden = false;
-    $('co_zone').onchange = () => { const z = CHECKOUT.zones.find(z => z.id === $('co_zone').value); quote = z ? { fee: z.fee, label: z.name.split(' (')[0], provider: 'zone', zone: z.id } : null; renderSum(); };
+    $('co_zone').onchange = () => { const z = CHECKOUT.areas.find(z => z.id === $('co_zone').value); quote = z ? { fee: z.fee, label: z.name, provider: 'area', zone: z.id } : null; $('co_zone').setAttribute('aria-invalid', 'false'); err(''); renderSum(); };
   }
   /* address search: real Google suggestions via /api/places (key stays on the server) */
-  let acProv = 'Google', addrBuilt = false, acMode = 'google', acSession = '', acTimer = 0, acItems = [], acSel = -1, acSeq = 0;
+  let acProv = 'Google', addrBuilt = false, acMode = 'zones', acSession = '', acTimer = 0, acItems = [], acSel = -1, acSeq = 0;
   const acBox = () => $('coAc');
   function acClose() { acBox().hidden = true; acSel = -1; $('co_addr').setAttribute('aria-expanded', 'false'); }
   function acRender(list, msg) {
@@ -660,9 +675,6 @@ document.getElementById('rail').innerHTML = COLLECTION.map((b, i) => `
   }
   function acFallback() {
     acMode = 'zones'; acClose(); useZones();
-    $('co_addr').placeholder = 'House number, street, area';
-    $('coAddrHint').textContent = 'Live address suggestions switch on once the site is deployed with the address key. For now, pick the area below.';
-    $('coAddrHint').hidden = false;
   }
   async function acSearch(q) {
     const my = ++acSeq;
@@ -713,8 +725,14 @@ document.getElementById('rail').innerHTML = COLLECTION.map((b, i) => `
     inp.addEventListener('blur', () => setTimeout(acClose, 150));
     acBox().addEventListener('mousedown', e => e.preventDefault());
     acBox().addEventListener('click', e => { const li = e.target.closest('[data-i]'); if (li) acPick(+li.dataset.i); });
-    // quick probe so the preview (no backend) falls back straight away
-    fetch(`${CHECKOUT.apiBase}/places?q=`).then(r => { if (!r.ok) acFallback(); }).catch(acFallback);
+    // default: type the address + pick the area (instant, no lookups).
+    // If a Google key is set on the server, upgrade to live address suggestions.
+    useZones();
+    fetch(`${CHECKOUT.apiBase}/places?q=`).then(r => r.ok ? r.json() : null).then(j => {
+      if (!j || j.provider !== 'google') return;
+      acMode = 'google'; acProv = 'Google';
+      $('coZoneWrap').hidden = true; inp.placeholder = 'Start typing the address';
+    }).catch(() => {});
   }
   $('co_self').addEventListener('change', e => { $('coRecip').hidden = e.target.checked; });
 
@@ -751,7 +769,7 @@ document.getElementById('rail').innerHTML = COLLECTION.map((b, i) => `
     try {
       const r = await fetch(CHECKOUT.apiBase + '/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(d) });
       const j = await r.json().catch(() => ({}));
-      if (!r.ok && !j.message) throw new Error('Failed to fetch');   // no payment backend here (e.g. preview)
+      if (!r.ok && !j.message) throw new Error(PREVIEW ? 'Failed to fetch' : 'SETUP ' + r.status);
       if (!r.ok) throw new Error(j.message || 'We could not start the payment. Please try again or chat with us.');
       if (!window.PaystackPop) await new Promise((res, rej) => { const sc = document.createElement('script'); sc.src = 'https://js.paystack.co/v2/inline.js'; sc.onload = res; sc.onerror = () => rej(new Error('Paystack could not load. Check your connection and try again.')); document.head.appendChild(sc); });
       const pop = new PaystackPop();
@@ -762,8 +780,10 @@ document.getElementById('rail').innerHTML = COLLECTION.map((b, i) => `
       });
     } catch (x) {
       btn.disabled = false; renderSum();
-      const offline = /Failed to fetch|NetworkError|JSON/.test(String(x && x.message));
-      err(offline ? 'Online payment is not switched on in this preview yet. It works once the site is deployed with the Paystack keys. You can still chat with us to order.' : x.message);
+      const m = String(x && x.message);
+      if (/^SETUP/.test(m)) err(`Our payment service is not responding (${m.slice(6)}). Please chat with us to order while we fix it.`);
+      else if (/Failed to fetch|NetworkError|JSON|Load failed/.test(m)) err(PREVIEW ? 'Online payment is not switched on in this preview. It works on the live site. You can still chat with us to order.' : 'We could not reach the payment service. Check your connection and try again, or chat with us.');
+      else err(m);
     }
   }
   async function confirm(reference, d, j) {
@@ -1321,7 +1341,9 @@ function setupScroll() {
     .to({}, { duration: 0.7 });
   ScrollTrigger.create({ animation: tl, trigger: hero, start: 'top top', end: () => '+=' + Math.round(innerHeight * (innerWidth < 900 ? 3.2 : 4)), pin: true, scrub: 1, invalidateOnRefresh: true });
 
-  ScrollTrigger.create({ trigger: '#how', start: 'top 80px', endTrigger: 'html', end: 'bottom bottom', toggleClass: { targets: '.nav', className: 'solid' } });
+  // navbar gets its blurred background as soon as the page scrolls at all
+  { const nav = document.querySelector('.nav'); const upd = () => nav.classList.toggle('solid', window.scrollY > 8);
+    addEventListener('scroll', upd, { passive: true }); upd(); }
   const rail = document.getElementById('rail');
   const rthumb = document.getElementById('rthumb'), rcount = document.getElementById('rcount'), nCards = rail.children.length;
   const railPos = pr => {

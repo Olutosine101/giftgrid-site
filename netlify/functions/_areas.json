@@ -1,0 +1,410 @@
+[
+ {
+  "id": "ikeja-allen-opebi-toyin",
+  "name": "Ikeja (Allen, Opebi, Toyin)",
+  "group": "Ikeja & North",
+  "fee": 2000,
+  "lat": 6.6,
+  "lng": 3.355
+ },
+ {
+  "id": "ikeja-gra",
+  "name": "Ikeja GRA",
+  "group": "Ikeja & North",
+  "fee": 2000,
+  "lat": 6.583,
+  "lng": 3.357
+ },
+ {
+  "id": "alausa-agidingbi",
+  "name": "Alausa / Agidingbi",
+  "group": "Ikeja & North",
+  "fee": 2000,
+  "lat": 6.613,
+  "lng": 3.36
+ },
+ {
+  "id": "oregun",
+  "name": "Oregun",
+  "group": "Ikeja & North",
+  "fee": 2000,
+  "lat": 6.598,
+  "lng": 3.367
+ },
+ {
+  "id": "ogba-oke-ira",
+  "name": "Ogba / Oke-Ira",
+  "group": "Ikeja & North",
+  "fee": 2000,
+  "lat": 6.631,
+  "lng": 3.34
+ },
+ {
+  "id": "agege",
+  "name": "Agege",
+  "group": "Ikeja & North",
+  "fee": 2500,
+  "lat": 6.618,
+  "lng": 3.322
+ },
+ {
+  "id": "ojodu-berger",
+  "name": "Ojodu / Berger",
+  "group": "Ikeja & North",
+  "fee": 2500,
+  "lat": 6.643,
+  "lng": 3.372
+ },
+ {
+  "id": "omole-olowora",
+  "name": "Omole / Olowora",
+  "group": "Ikeja & North",
+  "fee": 2500,
+  "lat": 6.633,
+  "lng": 3.383
+ },
+ {
+  "id": "magodo",
+  "name": "Magodo",
+  "group": "Ikeja & North",
+  "fee": 2500,
+  "lat": 6.617,
+  "lng": 3.388
+ },
+ {
+  "id": "isheri-olowora",
+  "name": "Isheri / Olowora",
+  "group": "Ikeja & North",
+  "fee": 3500,
+  "lat": 6.655,
+  "lng": 3.395
+ },
+ {
+  "id": "ikosi-ketu",
+  "name": "Ikosi / Ketu",
+  "group": "Ikeja & North",
+  "fee": 2500,
+  "lat": 6.597,
+  "lng": 3.391
+ },
+ {
+  "id": "ojota-ogudu",
+  "name": "Ojota / Ogudu",
+  "group": "Ikeja & North",
+  "fee": 2500,
+  "lat": 6.582,
+  "lng": 3.385
+ },
+ {
+  "id": "maryland-anthony",
+  "name": "Maryland / Anthony",
+  "group": "Ikeja & North",
+  "fee": 2500,
+  "lat": 6.568,
+  "lng": 3.368
+ },
+ {
+  "id": "abule-egba-ijaiye",
+  "name": "Abule Egba / Ijaiye",
+  "group": "Ikeja & North",
+  "fee": 3500,
+  "lat": 6.648,
+  "lng": 3.297
+ },
+ {
+  "id": "alagbado-iyana-ipaja",
+  "name": "Alagbado / Iyana Ipaja",
+  "group": "Ikeja & North",
+  "fee": 4500,
+  "lat": 6.64,
+  "lng": 3.27
+ },
+ {
+  "id": "gbagada",
+  "name": "Gbagada",
+  "group": "Central Mainland",
+  "fee": 3500,
+  "lat": 6.553,
+  "lng": 3.39
+ },
+ {
+  "id": "ilupeju-palmgrove",
+  "name": "Ilupeju / Palmgrove",
+  "group": "Central Mainland",
+  "fee": 3000,
+  "lat": 6.55,
+  "lng": 3.362
+ },
+ {
+  "id": "shomolu-bariga",
+  "name": "Shomolu / Bariga",
+  "group": "Central Mainland",
+  "fee": 3500,
+  "lat": 6.54,
+  "lng": 3.385
+ },
+ {
+  "id": "oshodi",
+  "name": "Oshodi",
+  "group": "Central Mainland",
+  "fee": 3000,
+  "lat": 6.555,
+  "lng": 3.343
+ },
+ {
+  "id": "mushin",
+  "name": "Mushin",
+  "group": "Central Mainland",
+  "fee": 4000,
+  "lat": 6.527,
+  "lng": 3.347
+ },
+ {
+  "id": "yaba-akoka",
+  "name": "Yaba / Akoka",
+  "group": "Central Mainland",
+  "fee": 4500,
+  "lat": 6.512,
+  "lng": 3.381
+ },
+ {
+  "id": "surulere",
+  "name": "Surulere",
+  "group": "Central Mainland",
+  "fee": 5000,
+  "lat": 6.5,
+  "lng": 3.354
+ },
+ {
+  "id": "ebute-metta",
+  "name": "Ebute Metta",
+  "group": "Central Mainland",
+  "fee": 5500,
+  "lat": 6.488,
+  "lng": 3.382
+ },
+ {
+  "id": "isolo-ajao-estate",
+  "name": "Isolo / Ajao Estate",
+  "group": "Central Mainland",
+  "fee": 3500,
+  "lat": 6.537,
+  "lng": 3.322
+ },
+ {
+  "id": "okota",
+  "name": "Okota",
+  "group": "Central Mainland",
+  "fee": 4500,
+  "lat": 6.511,
+  "lng": 3.31
+ },
+ {
+  "id": "ikotun-igando",
+  "name": "Ikotun / Igando",
+  "group": "Central Mainland",
+  "fee": 5000,
+  "lat": 6.552,
+  "lng": 3.264
+ },
+ {
+  "id": "egbeda-idimu",
+  "name": "Egbeda / Idimu",
+  "group": "Central Mainland",
+  "fee": 3500,
+  "lat": 6.59,
+  "lng": 3.288
+ },
+ {
+  "id": "lagos-island-cms-marina",
+  "name": "Lagos Island (CMS, Marina)",
+  "group": "Island",
+  "fee": 6500,
+  "lat": 6.455,
+  "lng": 3.394
+ },
+ {
+  "id": "ikoyi",
+  "name": "Ikoyi",
+  "group": "Island",
+  "fee": 7500,
+  "lat": 6.452,
+  "lng": 3.435
+ },
+ {
+  "id": "banana-island",
+  "name": "Banana Island",
+  "group": "Island",
+  "fee": 7500,
+  "lat": 6.462,
+  "lng": 3.45
+ },
+ {
+  "id": "victoria-island",
+  "name": "Victoria Island",
+  "group": "Island",
+  "fee": 8000,
+  "lat": 6.428,
+  "lng": 3.421
+ },
+ {
+  "id": "oniru",
+  "name": "Oniru",
+  "group": "Island",
+  "fee": 8500,
+  "lat": 6.432,
+  "lng": 3.45
+ },
+ {
+  "id": "eko-atlantic",
+  "name": "Eko Atlantic",
+  "group": "Island",
+  "fee": 8500,
+  "lat": 6.41,
+  "lng": 3.405
+ },
+ {
+  "id": "apapa",
+  "name": "Apapa",
+  "group": "Island",
+  "fee": 6500,
+  "lat": 6.449,
+  "lng": 3.36
+ },
+ {
+  "id": "lekki-phase-1",
+  "name": "Lekki Phase 1",
+  "group": "Lekki & Ajah",
+  "fee": 8500,
+  "lat": 6.447,
+  "lng": 3.473
+ },
+ {
+  "id": "ikate-elegushi",
+  "name": "Ikate / Elegushi",
+  "group": "Lekki & Ajah",
+  "fee": 9000,
+  "lat": 6.436,
+  "lng": 3.493
+ },
+ {
+  "id": "agungi-idado",
+  "name": "Agungi / Idado",
+  "group": "Lekki & Ajah",
+  "fee": 9500,
+  "lat": 6.44,
+  "lng": 3.51
+ },
+ {
+  "id": "osapa-london-jakande",
+  "name": "Osapa London / Jakande",
+  "group": "Lekki & Ajah",
+  "fee": 10000,
+  "lat": 6.437,
+  "lng": 3.53
+ },
+ {
+  "id": "chevron-ikota",
+  "name": "Chevron / Ikota",
+  "group": "Lekki & Ajah",
+  "fee": 10500,
+  "lat": 6.441,
+  "lng": 3.54
+ },
+ {
+  "id": "vgc",
+  "name": "VGC",
+  "group": "Lekki & Ajah",
+  "fee": 10500,
+  "lat": 6.452,
+  "lng": 3.565
+ },
+ {
+  "id": "ajah",
+  "name": "Ajah",
+  "group": "Lekki & Ajah",
+  "fee": 10500,
+  "lat": 6.468,
+  "lng": 3.572
+ },
+ {
+  "id": "abraham-adesanya-thomas-estate",
+  "name": "Abraham Adesanya / Thomas Estate",
+  "group": "Lekki & Ajah",
+  "fee": 11500,
+  "lat": 6.466,
+  "lng": 3.603
+ },
+ {
+  "id": "sangotedo",
+  "name": "Sangotedo",
+  "group": "Lekki & Ajah",
+  "fee": 12500,
+  "lat": 6.474,
+  "lng": 3.63
+ },
+ {
+  "id": "awoyaya",
+  "name": "Awoyaya",
+  "group": "Lekki & Ajah",
+  "fee": 15000,
+  "lat": 6.475,
+  "lng": 3.7
+ },
+ {
+  "id": "festac-amuwo-odofin",
+  "name": "Festac / Amuwo Odofin",
+  "group": "Outer Lagos",
+  "fee": 6500,
+  "lat": 6.466,
+  "lng": 3.29
+ },
+ {
+  "id": "satellite-town",
+  "name": "Satellite Town",
+  "group": "Outer Lagos",
+  "fee": 8000,
+  "lat": 6.448,
+  "lng": 3.255
+ },
+ {
+  "id": "ojo",
+  "name": "Ojo",
+  "group": "Outer Lagos",
+  "fee": 9500,
+  "lat": 6.46,
+  "lng": 3.17
+ },
+ {
+  "id": "ikorodu",
+  "name": "Ikorodu",
+  "group": "Outer Lagos",
+  "fee": 7000,
+  "lat": 6.619,
+  "lng": 3.506
+ },
+ {
+  "id": "ibeju-lekki",
+  "name": "Ibeju-Lekki",
+  "group": "Outer Lagos",
+  "fee": 15000,
+  "lat": 6.448,
+  "lng": 3.84
+ },
+ {
+  "id": "epe",
+  "name": "Epe",
+  "group": "Outer Lagos",
+  "fee": 15000,
+  "lat": 6.584,
+  "lng": 3.981
+ },
+ {
+  "id": "badagry",
+  "name": "Badagry",
+  "group": "Outer Lagos",
+  "fee": 15000,
+  "lat": 6.415,
+  "lng": 2.882
+ }
+]

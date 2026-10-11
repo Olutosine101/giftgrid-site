@@ -13,7 +13,7 @@ These details are already set in the site:
 - New-order alerts go to order@giftgrid.com.ng
 - Deliveries go out from 1b Saheed Owoyele Street
 - The site address is https://giftgrid.com.ng
-- Address search uses your Geoapify key, which is free for up to 3,000 searches a day and lives only on the server
+- Customers pick their Lagos area from a list (instant, no lookups), which sets the delivery fee. Areas and fees are in `netlify/functions/_areas.json` (and the same list in `index.html`)
 
 To change any of these later, edit `netlify/functions/_config.js`, or add a Netlify environment variable with the same name.
 
@@ -40,16 +40,18 @@ Go to **Site configuration → Environment variables** and add these:
 
 | Name | Value |
 |---|---|
-| `PAYSTACK_SECRET_KEY` | Only needed when you go live: your `sk_live_…` key. Your test key is already in the code, so testing works without it. Never put the live key in any file. |
+| `PAYSTACK_SECRET_KEY` | Your Paystack secret key: `sk_test_…` while testing, `sk_live_…` when you go live. Copy it fresh from Paystack → Settings → API Keys & Webhooks. |
 | `RESEND_API_KEY` | your `re_…` key |
 
 Then open **Deploys → Trigger deploy** so the site picks up the keys.
+
+Check your setup at any time by opening `https://giftgrid.com.ng/api/health`.
 
 Optional settings:
 
 | Name | What it's for |
 |---|---|
-| `GOOGLE_MAPS_API_KEY` | Switch address suggestions to Google. Once this is set, Google is used instead of Geoapify. |
+| `GOOGLE_MAPS_API_KEY` | Adds Google address suggestions as customers type (replaces the area list). |
 | `HUB_LAT`, `HUB_LNG` | The exact map pin of the dispatch address, if the automatic lookup puts it in the wrong place. |
 | `DELIVERY_BASE`, `DELIVERY_BASE_KM`, `DELIVERY_PER_KM`, `DELIVERY_MAX`, `DELIVERY_MAX_KM` | Your delivery pricing. The defaults are ₦2,000 for the first 5 km, then ₦250 per km, capped at ₦12,000, delivering up to 45 km. |
 | `CHOWDECK_API_KEY`, `CHOWDECK_QUOTE_URL` | Live Chowdeck delivery prices, once Chowdeck gives you API access. |
@@ -86,7 +88,7 @@ Check that:
 - the payment goes through
 - the customer gets a receipt and order@giftgrid.com.ng gets the order alert
 
-When everything works, add `PAYSTACK_SECRET_KEY` in Netlify with your live key, set the Live webhook URL in Paystack, and redeploy.
+When everything works, change `PAYSTACK_SECRET_KEY` in Netlify to your live key, set the Live webhook URL in Paystack, and redeploy.
 
 ## How an order works
 
