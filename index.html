@@ -349,7 +349,7 @@ gmp-place-autocomplete{width:100%;color-scheme:light}
   .mdl-acts.co-acts .mdl-go{flex:1 1 100%}
   .mdl-card[data-view="co"] .mdl-img,.mdl-card[data-view="done"] .mdl-img{height:20svh;padding:14px}
 }
-.f-mail{color:var(--mist);text-decoration:none;transition:color .2s}
+.f-mail{color:var(--mist);text-decoration:none;transition:color .2s;font-size:16px;font-weight:500;letter-spacing:.01em}
 .f-mail:hover{color:var(--lime)}
 
 /* checkout fields: one consistent size and look on every browser (incl. iPhone Safari) */
@@ -364,6 +364,11 @@ gmp-place-autocomplete{width:100%;color-scheme:light}
 .co input:not([type=checkbox]):focus,.co select:focus,.co textarea:focus{outline:2px solid var(--lime);outline-offset:1px;border-color:var(--forest)}
 .co input[aria-invalid="true"],.co select[aria-invalid="true"],.co textarea[aria-invalid="true"]{border-color:#C2412D;background-color:#FFF6F4}
 .co label{gap:6px}
+
+/* hidden buttons stay hidden (display rules on buttons would otherwise override [hidden]) */
+.mdl-acts [hidden]{display:none!important}
+.mdl-alt.solo{background:var(--forest);color:var(--yellow);border-color:var(--forest);padding:0 26px}
+.mdl-alt.solo:hover{background:var(--forest);transform:scale(1.03)}
 </style>
 
 <div id="loader" aria-hidden="true"><i class="bar" id="lbar"></i><img class="lmark" src="img/mark-yellow.png" alt=""><span class="count" id="lcount">0</span><span class="lbl">Packing your box</span></div>
@@ -592,6 +597,7 @@ document.getElementById('rail').innerHTML = COLLECTION.map((b, i) => `
     const msg = box.custom ? 'Hi GiftGrid, I would like to curate a custom box.' : `Hi GiftGrid, I have a question about the ${box.name.replace(/^The /, '')} (${box.price}).`;
     $('mdlChat').href = wa(msg);
     $('mdlBuy').hidden = !!box.custom;
+    $('mdlChat').classList.toggle('solo', !!box.custom);   // custom box: WhatsApp is the only (primary) action
     $('mdlChat').textContent = box.custom ? 'Start on WhatsApp' : 'Chat with a human';
     show('info');
     m.classList.add('open'); m.setAttribute('aria-hidden', 'false'); document.documentElement.style.overflow = 'hidden';
