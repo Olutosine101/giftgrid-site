@@ -11,6 +11,6 @@ module.exports = {
   // Set PAYSTACK_SECRET_KEY in Netlify → Site configuration → Environment variables (never in this file).
   PAYSTACK_SECRET_KEY: env('PAYSTACK_SECRET_KEY', ''),
   GEOAPIFY_API_KEY: env('GEOAPIFY_API_KEY', ''),   // off by default: the Lagos area list is used instead
-  HUB_LAT: env('HUB_LAT', ''),   // set these two once you have the exact pin; otherwise the address is looked up
-  HUB_LNG: env('HUB_LNG', ''),
+  HUB_LAT: env('HUB_LAT', '6.5612499'),   // dispatch pin: 1b Saheed Owoyele Street
+  HUB_LNG: env('HUB_LNG', '3.39850563'),
 };

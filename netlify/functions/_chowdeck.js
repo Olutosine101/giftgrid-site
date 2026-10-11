@@ -10,7 +10,7 @@ async function call(path, body, timeoutMs = 7000) {
   try {
     const r = await fetch(BASE + path, {
       method: 'POST', signal: ctrl.signal,
-      headers: { Authorization: `Bearer ${process.env.CHOWDECK_API_KEY}`, 'Content-Type': 'application/json' },
+      headers: { Authorization: `Bearer ${String(process.env.CHOWDECK_API_KEY).trim().replace(/^bearer\s+/i, '')}`, 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
     const j = await r.json().catch(() => ({}));
