@@ -1,0 +1,1424 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0">
+<title>GiftGrid — Unbox the Emotion</title>
+<script>
+/* every load and reload starts at the very top, at the start of the hero animation */
+(function () {
+  try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (e) {}
+  if (location.hash) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} }
+  const top = () => window.scrollTo(0, 0);
+  top();
+  addEventListener('DOMContentLoaded', top);
+  addEventListener('load', () => { top(); setTimeout(top, 0); });
+  addEventListener('beforeunload', top);
+  addEventListener('pageshow', e => { if (e.persisted) location.reload(); });   // back/forward cache: restart cleanly
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap">
+<style>
+/* Layout: WebGL stage. A kraft mailer box sits below a large serif headline; real products float around it, then drop in and lie flat as you scroll (top-down, like a real packed box), the lid folds shut and the camera settles on the closed box. Then steps, a horizontal Collection, CTA. Dark forest ground, kraft brown hero, brand lime + yellow accents. */
+:root{
+  color-scheme: dark;
+  --night:#0F1E0C;
+  --forest:#2C4A24;
+  --lime:#9DC73C;
+  --yellow:#F7EA2C;
+  --kraft:#C49A6C;
+  --cream:#F4F1E8;
+  --ink:#16260F;
+  --mist:rgba(244,241,232,.64);
+  --line:rgba(244,241,232,.15);
+  --display:"Fraunces", Georgia, "Times New Roman", serif;
+  --body:"Google Sans", "Product Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+*{box-sizing:border-box}
+html,body{background:var(--night)}
+body{color:var(--cream);font-family:var(--body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{display:block;max-width:100%}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--yellow);outline-offset:3px}
+
+#loader{position:fixed;inset:0;z-index:100;background:var(--night);display:flex;align-items:flex-end;justify-content:space-between;padding:clamp(16px,4vw,40px)}
+#loader .count{font-family:var(--display);font-weight:500;font-size:clamp(72px,15vw,200px);line-height:.8;font-variant-numeric:tabular-nums}
+#loader .lbl{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--mist);padding-bottom:12px}
+#loader .lmark{position:absolute;left:50%;top:44%;width:120px;transform:translate(-50%,-50%);animation:bob 1.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translate(-50%,-58%)}}
+#loader .bar{position:absolute;left:0;top:0;height:3px;width:0;background:var(--lime)}
+
+.nav{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:40;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px clamp(16px,4vw,40px);transition:background .35s}
+.nav.solid{background:rgba(15,30,12,.8);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:20px;text-decoration:none}
+.brand img{height:30px;width:auto;display:block}
+.nav-links{display:flex;align-items:center;gap:26px;font-size:14px;font-weight:500}
+.nav-links a{text-decoration:none;color:var(--mist);transition:color .2s}
+.nav-links a:hover{color:var(--cream)}
+.pill{display:inline-flex;align-items:center;gap:10px;background:var(--yellow);color:var(--ink)!important;font-weight:500;font-size:14px;text-decoration:none;padding:11px 18px 11px 20px;border-radius:999px;transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+
+.pill:hover{transform:scale(1.04)}
+
+#hero{position:relative;height:100svh;min-height:620px;overflow:hidden;background:radial-gradient(120% 90% at 50% 70%,#1E3818 0%,#132510 55%,#0B170A 100%)}
+#gl{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:2}
+.headline{position:absolute;z-index:1;left:0;right:0;top:clamp(84px,13vh,128px);text-align:center;padding-inline:16px;pointer-events:none}
+.headline h1{font-family:var(--display);font-weight:500;font-size:clamp(46px,8.2vw,128px);line-height:.92;letter-spacing:-.035em;margin:0;text-wrap:balance}
+.headline h1 em{font-style:italic;color:var(--lime)}
+.headline .ln{display:block;overflow:hidden;padding-bottom:.08em}
+.headline .ln:last-child{padding-bottom:.3em;margin-bottom:-.22em}
+.headline .ln > span{position:relative}
+.scribble{position:absolute;left:-2%;width:104%;bottom:-.2em;height:.32em;overflow:visible;pointer-events:none}
+.scribble path{fill:none;stroke:var(--yellow);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+.tags{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden}
+.tag{position:absolute;left:0;top:0;display:flex;align-items:center;gap:8px;padding:6px 12px 6px 10px;border-radius:999px;background:rgba(244,241,232,.94);color:var(--ink);font-size:12px;font-weight:500;letter-spacing:.01em;white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,.25);opacity:0;transition:opacity .45s ease;will-change:transform}
+.tag.on{opacity:1}
+.tag .dot{position:relative;width:7px;height:7px;border-radius:50%;background:var(--lime);flex:none}
+.tag .dot::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--lime);animation:tagpulse 2.2s ease-out infinite}
+.tag.on{animation:tagbreathe 3.2s ease-in-out infinite}
+@keyframes tagpulse{0%{transform:scale(.5);opacity:.9}80%,100%{transform:scale(1.9);opacity:0}}
+@keyframes tagbreathe{50%{scale:1.04}}
+@media (max-width:900px){.tag{font-size:10.5px;padding:4px 9px 4px 8px;gap:6px}}
+@media (prefers-reduced-motion:reduce){.tag .dot::after,.tag.on{animation:none}}
+.headline .ln > span{display:inline-block}
+.hero-ui{position:absolute;left:0;right:0;bottom:0;z-index:5;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;padding:0 clamp(16px,4vw,40px) clamp(20px,4vh,36px);pointer-events:none}
+.hero-ui > *{pointer-events:auto}
+.hero-ui p{margin:0;max-width:32ch;color:var(--mist);font-size:15px}
+.hero-ui p b{color:var(--cream);font-weight:500}
+.status{position:absolute;left:50%;bottom:clamp(20px,4vh,36px);transform:translateX(-50%);z-index:5;display:flex;align-items:center;gap:12px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mist);white-space:nowrap}
+.status .track{width:110px;height:2px;background:var(--line);overflow:hidden}
+.status .track i{display:block;height:100%;width:0;background:var(--lime)}
+.status b{color:var(--cream);font-weight:500;font-variant-numeric:tabular-nums}
+.box-name{position:absolute;z-index:5;left:50%;top:clamp(84px,13vh,128px);transform:translateX(-50%);text-align:center;opacity:0;visibility:hidden;width:min(560px,calc(100% - 32px))}
+.box-name .k{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--lime)}
+.box-name h2{font-family:var(--display);font-weight:500;font-size:clamp(30px,4vw,52px);line-height:1;letter-spacing:-.02em;margin:10px 0 0}
+
+.marquee{background:var(--yellow);color:var(--ink);overflow:hidden;padding-block:16px}
+.marquee-track{display:flex;width:max-content;animation:roll 34s linear infinite}
+.marquee span{font-family:var(--display);font-style:italic;font-weight:500;font-size:clamp(28px,4.2vw,54px);letter-spacing:-.02em;white-space:nowrap;display:flex;align-items:center;gap:36px;padding-right:36px}
+.marquee span::after{content:"";width:12px;height:12px;background:var(--ink);border-radius:50%}
+@keyframes roll{to{transform:translateX(-50%)}}
+
+.sec{padding:clamp(80px,12vw,150px) clamp(16px,4vw,40px)}
+.sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;max-width:1240px;margin:0 auto 52px}
+.sec-head h2{font-family:var(--display);font-weight:500;font-size:clamp(42px,6.4vw,92px);line-height:.92;letter-spacing:-.035em;margin:0;text-wrap:balance}
+.sec-head h2 em{font-style:italic}
+.sec-head p{margin:0;max-width:32ch;color:var(--mist)}
+.light{background:var(--cream);color:var(--ink)}
+.light .sec-head p{color:#56604E}
+.light .sec-head h2 em{color:var(--forest)}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto auto auto auto;max-width:1240px;margin:0 auto;border-top:1px solid rgba(22,38,15,.18)}
+.step{position:relative;padding:28px 0 8px;display:grid;gap:14px;align-content:start;grid-row:span 4;grid-template-rows:subgrid}
+.step .ph{width:100%}
+.step p{min-height:3em}
+.steps{column-gap:56px}
+.step + .step::before{content:"";position:absolute;left:-28px;top:0;bottom:0;border-left:1px solid rgba(22,38,15,.18)}
+.step .n{font-family:var(--display);font-style:italic;font-size:22px;color:var(--forest)}
+.step .ph{aspect-ratio:4/3;background:#E4E8D4;border-radius:18px;display:grid;grid-template-rows:100%;place-items:center;overflow:hidden}
+.step .ph img{max-height:72%;max-width:62%;width:auto;filter:drop-shadow(0 18px 18px rgba(22,38,15,.22));transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.step:hover .ph:not(.pick):not(.notif) img{transform:translateY(-8px) rotate(-3deg)}
+.notif{position:relative;display:block!important}
+.notif .nstage{position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);aspect-ratio:1/1;height:100%}
+.notif .nstage,.notif .nstage > img,.notif .nscreen{transition:none!important;rotate:none!important;scale:none!important}
+.notif .nstage > img{transform:none!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;filter:none!important;object-fit:cover}
+.notif .nscreen{position:absolute;left:33.6%;top:8.8%;width:32.4%;height:69.4%;border-radius:9% / 4.5%;overflow:hidden;background:linear-gradient(160deg,#20381b,#0d1a0b);container-type:inline-size}
+.notif .nin{position:absolute;inset:0;padding:6cqw;display:flex;flex-direction:column;gap:3.5cqw}
+.notif .ntime{text-align:center;color:#f4f1e8;margin:9cqw 0 6cqw}
+.notif .ntime b{display:block;font-family:var(--body);font-weight:500;font-size:19cqw;line-height:1;letter-spacing:-.02em}
+.notif .ntime span{font-size:5.4cqw;opacity:.8}
+.notif .island{position:absolute;z-index:2;left:50%;top:2.6%;transform:translateX(-50%);height:8.5cqw;width:30cqw;border-radius:99px;background:#000;display:flex;align-items:center;justify-content:center;gap:2.4cqw;overflow:hidden;color:#f4f1e8;font-size:4cqw;white-space:nowrap}
+.notif .ding{position:absolute;z-index:3;left:69%;top:7%;width:11%;aspect-ratio:1;border-radius:50%;background:var(--yellow);display:grid;place-items:center;box-shadow:0 8px 18px rgba(22,38,15,.22);opacity:0;transform:scale(.4)}
+.notif .ding svg{width:52%;height:52%;transform-origin:50% 12%}
+.notif .ding .ring{position:absolute;inset:0;border-radius:50%;border:2px solid var(--yellow);opacity:0}
+.notif .nn{display:flex;gap:3.5cqw;background:rgba(244,241,232,.92);color:#16260F;border-radius:5cqw;padding:4.5cqw;opacity:0;font-size:4.6cqw;line-height:1.3;box-shadow:0 2cqw 6cqw rgba(0,0,0,.3)}
+.notif .nn p{margin:0;color:#3d4736}
+.notif .nh{display:flex;justify-content:space-between;font-size:3.9cqw;color:#5d6656;text-transform:uppercase;letter-spacing:.04em}
+.notif .nh b{font-weight:500}.notif .nh i{font-style:normal}
+.notif .nic{flex:none;width:9cqw;height:9cqw;border-radius:2.4cqw;display:grid;place-items:center;color:#fff;font-weight:700;font-size:5cqw}
+.notif .nic.wa{background:#25D366}.notif .nic.ml{background:#2F7BF6}
+.pack3d{position:relative;display:block!important}
+.pack3d canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.pick{position:relative;display:block!important;overflow:hidden}
+.pick .ptrack{position:absolute;left:0;top:0;bottom:0;display:flex;align-items:center;gap:14px;width:max-content;will-change:transform}
+.pick .pc{flex:none;width:clamp(120px,30%,190px);display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 6px;border-radius:14px;background:rgba(255,255,255,.55);border:2px solid transparent;transition:none}
+.pick .pc img{width:100%!important;max-width:none!important;max-height:none!important;height:auto;aspect-ratio:1/1;object-fit:contain;filter:drop-shadow(0 8px 8px rgba(22,38,15,.2))!important}
+.pick .pb{font-size:11px;font-weight:500;background:#E4EDCF;color:var(--forest);border:1px solid rgba(44,74,36,.18);padding:8px 14px;border-radius:10px;white-space:nowrap;align-self:stretch;text-align:center}
+.pick .pcur{position:absolute;width:22px;height:22px;left:90%;top:92%;z-index:3;opacity:0}
+.step h3{font-family:var(--display);font-weight:500;font-size:28px;line-height:1.05;letter-spacing:-.02em;margin:6px 0 0}
+.step p{margin:0;color:#56604E}
+
+.coll{position:relative;overflow:hidden}
+.coll-pin{min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding-block:clamp(80px,11vh,120px)}
+.coll .sec-head{width:100%;max-width:none;padding-inline:clamp(16px,4vw,40px);margin-bottom:40px}
+.rnav{display:flex;align-items:center;gap:16px;padding:28px clamp(16px,4vw,40px) 0}
+.rbar{position:relative;flex:1;max-width:520px;height:3px;border-radius:3px;background:var(--line);overflow:hidden}
+.rbar i{position:absolute;left:0;top:0;bottom:0;width:20%;border-radius:3px;background:var(--lime);will-change:transform}
+.rcount{font-variant-numeric:tabular-nums;font-size:13px;font-weight:500;color:var(--cream);min-width:58px}
+.rhint{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mist)}
+@media (max-width:900px){.rhint::after{content:" →"}.rhint{font-size:0}.rhint::after{font-size:11px;content:"Swipe →"}}
+.coll-side{display:flex;flex-direction:column;align-items:flex-start;gap:16px;max-width:34ch}
+.coll-side p{margin:0}
+.coll-side .pill{border:0;cursor:pointer;font-family:inherit}
+.hint-x{display:block;margin-top:8px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--lime)}
+.rail{display:flex;gap:18px;padding-inline:clamp(16px,4vw,40px);width:max-content;will-change:transform}
+.bx{position:relative;flex:none;width:clamp(280px,26vw,380px);background:linear-gradient(180deg,#1B3115,#13240F);border:1px solid var(--line);border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:16px;overflow:hidden;transition:transform .5s cubic-bezier(.2,.8,.2,1),border-color .3s}
+.bx:hover{transform:translateY(-6px);border-color:rgba(157,199,60,.6)}
+.bx .top{display:flex;justify-content:space-between;gap:10px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mist)}
+.bx .shot{position:relative;aspect-ratio:1/1;border-radius:14px;background:radial-gradient(circle at 50% 40%,#284720,#152812);display:grid;grid-template-rows:100%;place-items:center;overflow:hidden}
+.bx .shot img{width:auto;height:auto;max-width:66%;max-height:66%;object-fit:contain;filter:drop-shadow(0 22px 24px rgba(0,0,0,.45));transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+.bx:hover .shot img{transform:scale(1.06) rotate(-3deg)}
+.bx .shot img[src*="pkgc-"]{max-width:90%;max-height:90%}
+.bx:hover .shot img[src*="pkgc-"]{transform:scale(1.04)}
+.mdl-img img[src*="pkgc-"]{max-width:96%;max-height:420px}
+.bx .ph-mark{font-family:var(--display);font-style:italic;font-weight:500;font-size:34px;color:rgba(157,199,60,.4)}
+.bx h3{font-family:var(--display);font-weight:500;font-size:24px;line-height:1.05;letter-spacing:-.02em;margin:0 0 6px}
+.bx p{margin:0 0 10px;color:var(--mist);font-size:14px;line-height:1.45}
+.bx .price{font-weight:500;color:var(--lime);font-variant-numeric:tabular-nums}
+.bx{cursor:pointer}
+.bx:focus-visible{outline:2px solid var(--yellow);outline-offset:3px}
+.bx-custom{background:transparent;border:1.5px dashed rgba(157,199,60,.55)}
+.bx-custom .shot{background:rgba(157,199,60,.08)}
+.bx .plus{font-family:var(--display);font-size:96px;line-height:1;color:var(--lime);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.bx-custom:hover .plus{transform:rotate(90deg)}
+/* modal */
+.mdl{position:fixed;inset:0;z-index:90;display:grid;place-items:center;padding:16px;visibility:hidden}
+.mdl.open{visibility:visible}
+.mdl-bg{position:absolute;inset:0;background:rgba(6,14,5,.72);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;transition:opacity .35s}
+.mdl.open .mdl-bg{opacity:1}
+.mdl-card{position:relative;width:min(920px,100%);max-height:calc(100svh - 32px);overflow:auto;background:var(--cream);color:var(--ink);border-radius:24px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);transform:translateY(30px) scale(.97);opacity:0;transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .3s}
+.mdl.open .mdl-card{transform:none;opacity:1}
+.mdl-card{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
+.mdl-img{background:radial-gradient(circle at 50% 40%,#284720,#13240F);display:grid;place-items:center;min-height:320px;padding:32px}
+.mdl-img img{max-width:72%;max-height:300px;width:auto;filter:drop-shadow(0 24px 26px rgba(0,0,0,.45))}
+.mdl-img .plus{font-family:var(--display);font-size:140px;color:var(--lime)}
+.mdl-img .ph-mark{font-family:var(--display);font-style:italic;font-size:44px;color:rgba(157,199,60,.5)}
+.mdl-body{padding:32px clamp(20px,3vw,36px);display:flex;flex-direction:column;gap:18px;min-width:0}
+.mdl-body[hidden],[hidden].co-done,.co[hidden]{display:none!important}
+.mdl-cat{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--forest);font-weight:500}
+.mdl-body h3{font-family:var(--display);font-weight:500;font-size:clamp(28px,3.4vw,40px);line-height:1;letter-spacing:-.02em;margin:0}
+.mdl-pack{margin:0;color:#56604E;font-size:14px}
+.mdl-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;font-size:14px}
+.mdl-list li{display:flex;gap:8px;align-items:baseline}
+.mdl-list li::before{content:"";flex:none;width:6px;height:6px;border-radius:50%;background:var(--lime);transform:translateY(-2px)}
+.mdl-sum{border-top:1px solid rgba(22,38,15,.15);padding-top:14px;display:grid;gap:6px;font-size:14px}
+.mdl-sum .r{display:flex;justify-content:space-between;gap:12px}
+.mdl-sum .r span:last-child{font-variant-numeric:tabular-nums}
+.mdl-sum .tot{font-weight:700;font-size:17px;padding-top:6px;border-top:1px dashed rgba(22,38,15,.2);margin-top:4px}
+.mdl-rules{margin:0;padding-left:18px;color:#56604E;font-size:13px;display:grid;gap:3px}
+.mdl-go{align-self:flex-start;display:inline-flex;align-items:center;gap:10px;background:var(--forest);color:var(--yellow);text-decoration:none;font-weight:500;padding:14px 22px;border-radius:999px;transition:transform .25s}
+.mdl-go:hover{transform:scale(1.04)}
+
+.mdl-x{position:absolute;right:14px;top:14px;z-index:2;width:38px;height:38px;border-radius:50%;border:0;background:rgba(244,241,232,.9);color:var(--ink);font-size:22px;line-height:1;cursor:pointer}
+
+@media (prefers-reduced-motion:reduce){.mdl-card,.mdl-bg{transition:none}}
+
+.cta{background:var(--lime);color:var(--ink);text-align:center}
+.cta-logo{width:120px;margin:0 auto 32px}
+.cta h2{font-family:var(--display);font-weight:500;font-size:clamp(48px,9vw,140px);line-height:.9;letter-spacing:-.04em;margin:0 auto 36px;max-width:11ch;text-wrap:balance}
+.cta h2 em{font-style:italic}
+.cta .pill{background:var(--ink);color:var(--yellow)!important;font-size:16px;padding:16px 26px 16px 28px}
+footer{background:var(--night);color:var(--mist);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding:28px clamp(16px,4vw,40px);font-size:13px;border-top:1px solid var(--line)}
+
+@media (max-width:900px){
+  .nav-links a:not(.pill){display:none}
+  .hero-ui{flex-direction:column;align-items:flex-start;gap:14px;padding-bottom:64px}
+  .status{bottom:22px}
+  .steps{grid-template-columns:1fr}
+  .step + .step{border-top:1px solid rgba(22,38,15,.18)}
+  .step + .step::before{display:none}
+  .coll-pin{min-height:0}
+  .rail{overflow-x:auto;width:auto;scroll-snap-type:x mandatory;padding-bottom:12px}
+  .bx{scroll-snap-align:start;width:78vw}
+  .hint-x::after{content:" →"}
+}
+@media (prefers-reduced-motion:reduce){ .marquee-track{animation:none} }
+
+.mdl-acts{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.mdl-go{border:0;cursor:pointer;font:inherit}
+.mdl-go[disabled]{opacity:.55;cursor:progress}
+.mdl-alt{display:inline-flex;align-items:center;min-height:48px;padding:0 20px;border-radius:999px;border:1.5px solid rgba(22,38,15,.25);color:var(--ink);text-decoration:none;font-weight:500;transition:border-color .2s,background .2s}
+.mdl-alt:hover{border-color:var(--forest);background:rgba(44,74,36,.06)}
+.co{gap:16px}
+.co fieldset{border:0;margin:0;padding:0;display:grid;gap:10px}
+.co legend{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--forest);font-weight:500;margin-bottom:8px;padding:0}
+.co label{display:grid;gap:5px;font-size:13px;color:#3d4736}
+.co label small{color:#7a8470;font-size:12px}
+.co input,.co select,.co textarea{font:inherit;font-size:16px;color:var(--ink);background:#fff;border:1px solid rgba(22,38,15,.2);border-radius:10px;padding:11px 12px;min-height:46px;width:100%;box-sizing:border-box}
+.co textarea{min-height:0;resize:vertical}
+.co input:focus,.co select:focus,.co textarea:focus{outline:2px solid var(--lime);outline-offset:1px;border-color:var(--forest)}
+.co input[aria-invalid="true"],.co select[aria-invalid="true"]{border-color:#C2412D;background:#FFF6F4}
+.co .f2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.co .chk{display:flex;align-items:center;gap:8px;font-size:14px}
+.co .chk input{width:18px;height:18px;min-height:0}
+.co-back{align-self:flex-start;border:0;background:none;color:var(--forest);font:inherit;font-size:13px;cursor:pointer;padding:6px 0;text-decoration:underline;text-underline-offset:3px}
+.co-err{margin:0;color:#A3321F;font-size:14px;background:#FFF1EE;border-radius:10px;padding:10px 12px}
+.co-secure{font-size:12px;color:#7a8470}
+.co-hint{font-size:12px;color:#7a8470}
+.co-done p{margin:0;color:#3d4736}
+gmp-place-autocomplete{width:100%;color-scheme:light}
+.mdl-sum .r.muted span:last-child{color:#7a8470}
+@media (max-width:900px){
+  .mdl-acts{position:sticky;bottom:0;background:var(--cream);margin:4px -20px 0;padding:12px 20px calc(env(safe-area-inset-bottom,0px) + 12px);box-shadow:0 -10px 24px rgba(244,241,232,1);z-index:2}
+  .mdl-acts .mdl-go,.mdl-acts .mdl-alt{flex:1;justify-content:center;min-height:50px}
+  .mdl-acts{flex-wrap:nowrap}
+  .mdl-acts .mdl-go,.mdl-acts .mdl-alt{position:static;margin:0;border-radius:999px;box-shadow:none;padding:0 14px;white-space:nowrap;align-items:center;font-size:15px}
+  .co .f2{grid-template-columns:1fr}
+  .co-secure{width:100%;text-align:center}
+}
+/* ---------- mobile ---------- */
+.menu-btn{display:none}
+.sheet{position:fixed;inset:0;z-index:39;background:var(--night);padding:calc(env(safe-area-inset-top,0px) + 96px) 24px calc(env(safe-area-inset-bottom,0px) + 28px);display:flex;flex-direction:column;justify-content:space-between;clip-path:inset(0 0 100% 0);transition:clip-path .6s cubic-bezier(.7,0,.2,1);visibility:hidden}
+.sheet.open{clip-path:inset(0);visibility:visible}
+.sheet-links{display:flex;flex-direction:column}
+.sheet-links a{font-family:var(--display);font-size:40px;line-height:1.1;letter-spacing:-.02em;text-decoration:none;padding:12px 0;border-bottom:1px solid var(--line);opacity:0;transform:translateY(20px);transition:opacity .4s,transform .5s cubic-bezier(.2,.8,.2,1)}
+.sheet.open .sheet-links a{opacity:1;transform:none}
+.sheet.open .sheet-links a:nth-child(2){transition-delay:.05s}.sheet.open .sheet-links a:nth-child(3){transition-delay:.1s}.sheet.open .sheet-links a:nth-child(4){transition-delay:.15s}
+.sheet-foot{display:flex;flex-direction:column;align-items:flex-start;gap:14px;color:var(--mist);font-size:13px}
+.sheet-foot .pill{min-height:52px;padding-inline:28px;font-size:16px}
+@media (max-width:900px){
+  .nav{padding-block:12px}
+  .nav-links{gap:10px}
+  .nav-links > .pill{min-height:44px;padding:0 18px}
+  .menu-btn{display:grid;place-content:center;gap:6px;width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:rgba(15,30,12,.5);cursor:pointer;padding:0}
+  .menu-btn span{display:block;width:18px;height:2px;background:var(--cream);border-radius:2px;transition:transform .35s}
+  .menu-open .menu-btn span:first-child{transform:translateY(4px) rotate(45deg)}
+  .menu-open .menu-btn span:last-child{transform:translateY(-4px) rotate(-45deg)}
+  .headline{top:calc(env(safe-area-inset-top,0px) + 82px)}
+  .headline h1{font-size:clamp(44px,13vw,64px)}
+  .box-name{top:calc(env(safe-area-inset-top,0px) + 84px)}
+  .box-name h2{font-size:28px}
+  .hero-ui{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 58px)}
+  .hero-ui p{font-size:14px}
+  .status{bottom:calc(env(safe-area-inset-bottom,0px) + 20px)}
+  .sec{padding-block:72px}
+  .sec-head{margin-bottom:28px}
+  .sec-head h2{font-size:44px}
+  .step{gap:10px;padding-block:24px}
+  .step .ph{aspect-ratio:5/4}
+  .step h3{font-size:24px}
+  .coll-pin{padding-block:64px 56px}
+  .coll .sec-head{margin-bottom:24px}
+  .coll-side .pill{min-height:46px;padding:0 20px}
+  .rail{padding-inline:20px;scroll-padding-inline:20px;gap:12px;scrollbar-width:none}
+  .rail::-webkit-scrollbar{display:none}
+  .bx{width:82vw;padding:16px}
+  .bx:hover{transform:none}
+  .rnav{padding-inline:20px}
+  .cta h2{font-size:clamp(46px,14vw,72px)}
+  .cta .pill{min-height:54px}
+  footer{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 24px)}
+  footer{flex-direction:column;align-items:flex-start;gap:6px}
+  /* modal becomes a bottom sheet with a sticky order bar */
+  .mdl{padding:0;place-items:end stretch}
+  .mdl-card{width:100%;max-height:92svh;border-radius:24px 24px 0 0;grid-template-columns:1fr;transform:translateY(100%);opacity:1;transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+  .mdl.open .mdl-card{transform:none}
+  .mdl-card::before{content:"";position:sticky;top:8px;z-index:3;display:block;width:44px;height:5px;border-radius:5px;background:rgba(244,241,232,.7);margin:8px auto -13px;grid-column:1}
+  .mdl-img{min-height:0;height:34svh;padding:20px;overflow:hidden;grid-template-rows:100%}
+  .mdl-img img{width:100%;height:100%!important;max-height:100%!important;max-width:100%!important;object-fit:contain}
+  .mdl-body{padding:22px 20px 0;gap:14px}
+  .mdl-body h3{font-size:30px}
+  .mdl-list{grid-template-columns:1fr;gap:4px}
+  .mdl-x{top:12px;right:12px;width:44px;height:44px}
+}
+
+
+/* modal v2: shorter card, image pinned left, right column scrolls */
+.ac-wrap{position:relative}
+.ac{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:5;list-style:none;margin:0;padding:6px;background:#fff;border:1px solid rgba(22,38,15,.14);border-radius:14px;box-shadow:0 18px 40px rgba(12,24,8,.18);max-height:300px;overflow:auto}
+.ac li[data-i]{display:grid;gap:2px;padding:10px 12px;border-radius:10px;cursor:pointer;font-size:14px;line-height:1.3}
+.ac li[data-i] b{font-weight:500;color:var(--ink)}
+.ac li[data-i] span{font-size:12.5px;color:#6b7563}
+.ac li[data-i]:hover,.ac li.on{background:rgba(157,199,60,.16)}
+.ac .ac-msg{padding:10px 12px;font-size:13px;color:#6b7563}
+.ac .ac-g{padding:6px 12px 4px;font-size:11px;color:#9aa391;text-align:right}
+.co-addr{display:grid;gap:5px;font-size:13px;color:#3d4736}
+.co-addr .co-hint{color:#7a8470}
+@media (min-width:901px){
+  .mdl{padding:24px}
+  .mdl-card{--px:clamp(24px,3vw,36px);width:min(880px,100%);height:min(600px,calc(100svh - 48px));max-height:none;overflow:hidden;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);grid-template-rows:minmax(0,1fr)}
+  .mdl-img{min-height:0;height:100%;box-sizing:border-box}
+  .mdl-img img{max-height:min(340px,70%)}
+  .mdl-body{min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:28px var(--px);gap:16px;scrollbar-width:thin;scrollbar-color:rgba(22,38,15,.25) transparent}
+  .mdl-body .mdl-acts{position:sticky;bottom:-28px;margin:auto calc(var(--px) * -1) -28px;padding:14px var(--px) 22px;background:var(--cream);box-shadow:0 -12px 22px -6px rgba(244,241,232,1);z-index:3}
+  .co h3{font-size:clamp(26px,2.4vw,32px)}
+  .co{gap:14px}
+  .co fieldset{gap:9px}
+  .co input,.co select{min-height:44px;padding:10px 12px}
+}
+@media (max-width:900px){
+  .mdl-card{max-height:88svh}
+  .mdl-acts.co-acts{flex-wrap:wrap;row-gap:6px}
+  .mdl-acts.co-acts .mdl-go{flex:1 1 100%}
+  .mdl-card[data-view="co"] .mdl-img,.mdl-card[data-view="done"] .mdl-img{height:20svh;padding:14px}
+}
+.f-mail{color:var(--mist);text-decoration:none;transition:color .2s}
+.f-mail:hover{color:var(--lime)}
+</style>
+
+<div id="loader" aria-hidden="true"><i class="bar" id="lbar"></i><img class="lmark" src="img/mark-yellow.png" alt=""><span class="count" id="lcount">0</span><span class="lbl">Packing your box</span></div>
+
+<nav class="nav">
+  <a class="brand" href="#hero" aria-label="GiftGrid home"><img src="img/logo-h-light.png" alt="GiftGrid"></a>
+  <div class="nav-links">
+    <a href="#how">How it works</a>
+    <a href="#boxes">Collection</a>
+    <a href="#boxes" data-open="6">Corporate</a>
+    <a class="pill" href="#boxes">Send a gift</a>
+    <button class="menu-btn" id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="sheet"><span></span><span></span></button>
+  </div>
+</nav>
+<div class="sheet" id="sheet" aria-hidden="true" data-lenis-prevent>
+  <nav class="sheet-links" aria-label="Menu">
+    <a href="#how">How it works</a>
+    <a href="#boxes">The Collection</a>
+    <a href="#boxes" data-open="6">Corporate gifting</a>
+    <a href="#boxes" data-open="10">Curate a custom box</a>
+  </nav>
+  <div class="sheet-foot"><a class="pill" href="#boxes">Send a gift</a><span>Delivering across Lagos</span></div>
+</div>
+
+<section id="hero" aria-label="GiftGrid">
+  <div class="headline" id="headline"><h1><span class="ln"><span>Unbox the</span></span><span class="ln"><span><em>Emotion.</em><svg class="scribble" viewBox="0 0 300 30" preserveAspectRatio="none" aria-hidden="true"><path id="scrib" d="M6 18 C 52 9, 98 22, 150 14 S 246 7, 294 13 M 40 25 C 110 18, 190 26, 270 20"/></svg></span></span></h1></div>
+  <canvas id="gl" aria-hidden="true"></canvas>
+  <div class="box-name" id="boxName"><div class="k">Packed for them</div><h2>The Coffee &amp; Tea Connoisseur</h2></div>
+  <div class="hero-ui" id="heroUi">
+    <p><b>Luxury gifting, Nigerian soul.</b> Curated boxes delivered across Lagos.</p>
+  </div>
+  <div class="status" id="status"><span id="slabel">Packing</span><span class="track"><i id="strack"></i></span><b id="scount">0/7</b></div>
+</section>
+
+<div class="marquee" aria-hidden="true"><div class="marquee-track">
+  <span>Unbox the emotion</span><span>Unbox the emotion</span><span>Unbox the emotion</span><span>Unbox the emotion</span>
+  <span>Unbox the emotion</span><span>Unbox the emotion</span><span>Unbox the emotion</span><span>Unbox the emotion</span>
+</div></div>
+
+<section class="sec light" id="how">
+  <div class="sec-head"><h2>Three steps<br>to their <em>smile.</em></h2><p>You choose. We curate, pack and deliver.</p></div>
+  <div class="steps">
+    <article class="step"><span class="n">01</span><div class="ph pick" id="pick" aria-label="Animation: choosing a box from the collection">
+      <div class="ptrack">
+        <div class="pc"><img src="img/pkgc-continental-royalty.webp" alt=""><span class="pb">Select this</span></div>
+        <div class="pc"><img src="img/pkgc-staff-appreciation.webp" alt=""><span class="pb">Select this</span></div>
+        <div class="pc" data-target><img src="img/pkgc-coffee-tea.webp" alt=""><span class="pb">Select this</span></div>
+      </div>
+      <svg class="pcur" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3l14 8-6 1.6L10 19z" fill="#16260F" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
+    </div><h3>Choose a box</h3><p>Pick from the collection and add a personal note.</p></article>
+    <article class="step"><span class="n">02</span><div class="ph pack3d" aria-label="Animation: products dropping into the box and the lid closing"><canvas id="gl2"></canvas></div><h3>We curate and pack</h3><p>Hand-packed in a box they will want to keep.</p></article>
+    <article class="step"><span class="n">03</span><div class="ph notif" id="notif" aria-label="Animation: a phone receiving delivery alerts by WhatsApp and email">
+      <div class="nstage"><img src="img/hand-phone.webp" alt="">
+        <div class="ding" aria-hidden="true"><span class="ring"></span><span class="ring"></span><svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0-6 6v3.6L4.3 15.4A1 1 0 0 0 5.2 17h13.6a1 1 0 0 0 .9-1.6L18 12.6V9a6 6 0 0 0-6-6zm-2.5 15a2.5 2.5 0 0 0 5 0z" fill="#16260F"/></svg></div>
+        <div class="nscreen"><div class="island" aria-hidden="true"></div><div class="nin">
+          <div class="ntime"><b>7:15</b><span>Saturday, 18 October</span></div>
+          <div class="nn" data-n="wa"><span class="nic wa">W</span><div><div class="nh"><b>WhatsApp</b><i>now</i></div><b>GiftGrid</b><p>Your Coffee &amp; Tea box is on the way 🚚 Rider Tunde will arrive by 8:00 a.m.</p></div></div>
+          <div class="nn" data-n="mail"><span class="nic ml">✉</span><div><div class="nh"><b>Mail</b><i>now</i></div><b>Your GiftGrid order has left</b><p>Order #GG-2418 is out for delivery to Lekki Phase 1.</p></div></div>
+        </div></div>
+      </div>
+    </div><h3>Delivered on time</h3><p>A WhatsApp and email alert the moment it leaves.</p></article>
+  </div>
+</section>
+
+<section class="coll" id="boxes">
+  <div class="coll-pin">
+    <div class="sec-head"><h2>The <em>Collection.</em></h2><div class="coll-side"><p>Ten boxes for every reason to show up, or curate your own.</p><button class="pill" type="button" id="customBtn">Curate a custom box</button></div></div>
+    <div class="rail" id="rail"></div>
+    <div class="rnav" aria-hidden="true"><span class="rcount" id="rcount">01 / 11</span><div class="rbar"><i id="rthumb"></i></div><span class="rhint">Scroll</span></div>
+  </div>
+</section>
+
+<div class="mdl" id="mdl" role="dialog" aria-modal="true" aria-labelledby="mdlTitle" aria-hidden="true">
+  <div class="mdl-bg" data-close></div>
+  <div class="mdl-card" data-lenis-prevent>
+    <button class="mdl-x" type="button" data-close aria-label="Close">×</button>
+    <div class="mdl-img" id="mdlImg"></div>
+    <div class="mdl-body">
+      <span class="mdl-cat" id="mdlCat"></span>
+      <h3 id="mdlTitle"></h3>
+      <p class="mdl-pack" id="mdlPack"></p>
+      <ul class="mdl-list" id="mdlList"></ul>
+      <div class="mdl-sum" id="mdlSum"></div>
+      <ul class="mdl-rules" id="mdlRules"></ul>
+      <div class="mdl-acts" id="mdlActs">
+        <button class="mdl-go" id="mdlBuy" type="button">Get this now</button>
+        <a class="mdl-alt" id="mdlChat" href="#" target="_blank" rel="noopener">Chat with a human</a>
+      </div>
+    </div>
+    <!-- checkout -->
+    <form class="mdl-body co" id="coForm" hidden novalidate>
+      <button class="co-back" type="button" id="coBack">Back to box</button>
+      <span class="mdl-cat">Checkout</span>
+      <h3 id="coTitle">Send this box</h3>
+      <fieldset><legend>Your details</legend>
+        <div class="f2">
+          <label>Full name<input id="co_name" name="buyer_name" autocomplete="name" required></label>
+          <label>Phone<input id="co_phone" name="buyer_phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="0803 000 0000" required></label>
+        </div>
+        <label>Email <small>for your receipt</small><input id="co_email" name="buyer_email" type="email" autocomplete="email" required></label>
+      </fieldset>
+      <fieldset><legend>Who is it for?</legend>
+        <label class="chk"><input type="checkbox" id="co_self"> It's for me</label>
+        <div class="f2" id="coRecip">
+          <label>Recipient's name<input id="co_rname" name="recipient_name" required></label>
+          <label>Recipient's phone<input id="co_rphone" name="recipient_phone" type="tel" inputmode="tel" required></label>
+        </div>
+      </fieldset>
+      <fieldset><legend>Delivery</legend>
+        <div class="co-addr"><label for="co_addr">Delivery address</label><div class="ac-wrap" id="coAddrWrap"><input id="co_addr" name="address" autocomplete="off" placeholder="Start typing, e.g. 7b Aderemi Akeju" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="coAc" required><ul class="ac" id="coAc" role="listbox" hidden></ul></div><small class="co-hint" id="coAddrHint" hidden></small></div>
+        <label id="coZoneWrap" hidden>Area<select id="co_zone" name="zone"></select></label>
+        <label>Apartment, gate, landmark <small>optional</small><input id="co_addr2" name="address_extra" placeholder="Flat 4B, blue gate opposite the pharmacy"></label>
+        <div class="f2">
+          <label>Delivery date<input id="co_date" name="date" type="date" required></label>
+          <label>Time window<select id="co_slot" name="slot" required></select></label>
+        </div>
+        <label>Backup contact <small>gate security or a second number</small><input id="co_backup" name="backup_contact" type="tel" inputmode="tel"></label>
+      </fieldset>
+      <fieldset><legend>Make it personal</legend>
+        <label>Gift card message <small>optional</small><textarea id="co_note" name="card_message" rows="3" maxlength="280" placeholder="Happy birthday, Mum. Love, Tosin"></textarea></label>
+        <label>Anything else we should know? <small>optional</small><textarea id="co_extra" name="instructions" rows="2" maxlength="280" placeholder="Allergies, a surprise, call before arriving..."></textarea></label>
+      </fieldset>
+      <div class="mdl-sum" id="coSum"></div>
+      <p class="co-err" id="coErr" role="alert" hidden></p>
+      <div class="mdl-acts co-acts">
+        <button class="mdl-go" id="coPay" type="submit">Pay</button>
+        <span class="co-secure">Secure payment by Paystack</span>
+      </div>
+    </form>
+    <!-- done -->
+    <div class="mdl-body co-done" id="coDone" hidden>
+      <span class="mdl-cat">Order confirmed</span>
+      <h3>Thank you! Your gift is booked.</h3>
+      <p id="coDoneText"></p>
+      <div class="mdl-sum" id="coDoneSum"></div>
+      <div class="mdl-acts"><button class="mdl-go" type="button" data-close>Done</button><a class="mdl-alt" id="coDoneChat" href="#" target="_blank" rel="noopener">Chat with a human</a></div>
+    </div>
+  </div>
+</div>
+
+<section class="sec cta" id="send">
+  <img class="cta-logo" src="img/logo-stacked.png" alt="GiftGrid">
+  <h2>Think gifting? Think <em>GiftGrid.</em></h2>
+  <a class="pill" href="#boxes">Send a gift</a>
+</section>
+<footer><a class="f-mail" href="mailto:hello@giftgrid.com.ng">hello@giftgrid.com.ng</a><span>© <span id="yr">2026</span> GiftGrid. All rights reserved.</span></footer>
+<script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+
+<script>
+/* Collection: boxes from the business plan, contents sourced in Nigeria */
+const COLLECTION = [
+  { cat: 'Breakfast', name: 'The Continental Royalty', price: '₦48,000', img: 'continental-royalty', cut: 'pkgc-continental-royalty', pack: 'Clear-lid gift box',
+    items: 'Belgian waffles, mini pancakes with syrup, scrambled eggs, chicken franks, club sandwich, red apples, green grapes, fresh orange juice' },
+  { cat: 'Breakfast', name: 'Pancake Tower', price: '₦42,000', img: 'pancake-tower', cut: 'pkgc-pancake-tower', pack: 'Clear-lid gift box',
+    items: 'Six buttermilk pancakes, strawberries, Nutella, maple syrup and Lotus Biscoff spread cups, turkey bacon, chicken sausages, omelette, iced coffee' },
+  { cat: 'Breakfast', name: 'Sweet & Savoury Naija Morning', price: '₦40,000', img: 'naija-morning', cut: 'pkgc-naija-morning', pack: 'Clear-lid gift box',
+    items: 'Fried yam, egg sauce, dodo, peppered chicken wings, akara, a bowl of creamy pap (ogi)' },
+  { cat: 'Fruit', name: 'Exotic Wellness Crate', price: '₦65,000', img: 'exotic-wellness', cut: 'pkgc-exotic-wellness', pack: 'Woven tray basket',
+    items: 'Dragon fruit, kiwi, red grapes, green grapes, pomegranate, apples, oranges, a jar of raw Nigerian honey' },
+  { cat: 'Fruit', name: 'Harvest Abundance Basket', price: '₦35,000', img: 'harvest-abundance', cut: 'pkgc-harvest-abundance', pack: 'Woven tray basket',
+    items: 'Pineapple, pawpaw, oranges, bananas, watermelon, ginger, dates, tiger nuts' },
+  { cat: 'Care', name: 'Family Care & Support', price: '₦85,000', img: 'family-care', cut: 'pkgc-family-care', pack: 'Large black cloth bag',
+    items: 'Mama Gold rice 5kg, Kings vegetable oil 3L, Golden Penny Semovita 2kg, crate of eggs, stockfish, dried catfish, crayfish, Knorr cubes, Gino tomato paste, a tuber of yam' },
+  { cat: 'Corporate', name: 'Staff Appreciation Box', price: '₦38,000', img: 'staff-appreciation', cut: 'pkgc-staff-appreciation', pack: 'Large black cloth bag',
+    items: 'Mama Gold rice 2.5kg, Kings vegetable oil 1L, Pringles, Chivita 1L, Knorr cubes, Gino tomato paste, a mini yam' },
+  { cat: 'Lifestyle', name: 'Sweet Tooth & Craving', price: '₦40,000', img: 'sweet-tooth', cut: 'pkgc-sweet-tooth', pack: 'Kraft gift box',
+    items: 'Ferrero Rocher, Kinder Bueno, peanut M&M’s, Pringles Original, McVitie’s Digestives, glazed doughnuts, chocolate-dipped strawberries, chin-chin, candied cashews' },
+  { cat: 'Lifestyle', name: 'Coffee & Tea Connoisseur', price: '₦55,000', img: 'coffee-tea', cut: 'pkgc-coffee-tea', pack: 'Kraft gift box',
+    items: 'Nescafé Gold, Nescafé Cappuccino, Coffee-mate, Lipton Yellow Label tea, McVitie’s Hobnobs chocolate chip, TUC crackers, Didian crackers, Hajor date powder' },
+  { cat: 'Romance', name: 'Love Language Box', price: '₦75,000', img: 'love-language', cut: 'pkgc-love-language', pack: 'Black gift box',
+    items: 'Four Cousins Natural Sweet Red in a jute bag, Ferrero Rocher, chocolate truffles, a scented candle, fresh red roses, a personal message card' },
+  { cat: 'Custom', name: 'Curate a Custom Box', price: 'Your budget', custom: true, pack: 'Any box in the collection',
+    items: 'You pick the occasion, budget and items, we source them in Nigeria, pack them beautifully and deliver' },
+];
+/* ---- ordering settings: fill these in later ---- */
+const WHATSAPP_NUMBER = '2348089440743';          // e.g. '2348012345678' (country code, no +)
+/* ---- checkout settings: fill these in when deploying ---- */
+const CHECKOUT = {
+  apiBase: '/api',                    // Netlify Functions (see netlify.toml)
+  hub: { lat: 6.6018, lng: 3.3515 },  // where boxes leave from (placeholder: Ikeja)
+  // fallback pricing when no live quote is available (keep in sync with netlify/functions/_pricing.js)
+  pricing: { base: 2000, baseKm: 5, perKm: 250, max: 12000, maxKm: 45 },
+  zones: [
+    { id: 'mainland', name: 'Mainland (Ikeja, Yaba, Surulere, Gbagada, Maryland)', fee: 3000 },
+    { id: 'island', name: 'Island (VI, Ikoyi, Lekki Phase 1, Oniru)', fee: 4500 },
+    { id: 'lekki', name: 'Lekki to Ajah (Chevron, VGC, Sangotedo)', fee: 6000 },
+    { id: 'outer', name: 'Outer Lagos (Ikorodu, Badagry, Epe, Alagbado)', fee: 8000 },
+  ],
+};
+const DELIVERY = {
+  fee: null,                          // e.g. 3500 for a flat fee; null = confirmed on WhatsApp
+  rules: [
+    'Delivering across Lagos',
+    'Order by 9:00 a.m. the day before delivery',
+    'Breakfast boxes need 24 hours’ notice and arrive 7:30–11:00 a.m.',
+    'Add a second contact or gate security number for the recipient',
+  ],
+};
+document.getElementById('rail').innerHTML = COLLECTION.map((b, i) => `
+  <article class="bx${b.custom ? ' bx-custom' : ''}" role="button" tabindex="0" data-i="${i}" aria-label="View ${b.name.replace(/&/g,'&amp;')}">
+    <div class="top"><span>${b.cat}</span><span>${String(i + 1).padStart(2, '0')}</span></div>
+    <div class="shot">${b.custom ? `<span class="plus" aria-hidden="true">+</span>` : b.cut ? `<img src="img/${b.cut}.webp" alt="${b.name.replace(/&/g,'&amp;')}" loading="lazy">` : `<span class="ph-mark" aria-hidden="true">${b.cat}</span>`}</div>
+    <div><h3>${b.name.replace(/&/g,'&amp;')}</h3><p>${b.items}</p><span class="price">${b.price}</span></div>
+  </article>`).join('');
+(() => {
+  const m = document.getElementById('mdl'), $ = id => document.getElementById(id);
+  const naira = n => '₦' + Math.round(n).toLocaleString('en-NG');
+  const num = p => { const v = parseInt(String(p).replace(/[^0-9]/g, ''), 10); return isNaN(v) ? null : v; };
+  const esc = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  const views = { info: document.querySelector('.mdl-body:not(.co):not(.co-done)'), co: $('coForm'), done: $('coDone') };
+  const show = v => { const c = m.querySelector('.mdl-card'); Object.entries(views).forEach(([k, el]) => { el.hidden = k !== v; el.scrollTop = 0; }); c.scrollTop = 0; c.dataset.view = v; };
+  const wa = msg => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+  let last = null, box = null, quote = null, mapsReady = null, place = null;
+
+  /* ---------------- info view ---------------- */
+  function open(i) {
+    box = COLLECTION[i]; box.index = i; last = document.activeElement;
+    $('mdlImg').innerHTML = box.custom ? '<span class="plus">+</span>' : box.cut ? `<img src="img/${box.cut}.webp" alt="">` : `<span class="ph-mark">${box.cat}</span>`;
+    $('mdlCat').textContent = box.cat; $('mdlTitle').textContent = box.name; $('mdlPack').textContent = 'Packaging: ' + box.pack;
+    const list = box.custom ? ['Tell us the occasion and who it is for', 'Set your budget', 'Choose items, or let us curate for you', 'Pick packaging and add a note'] : box.items.split(/,\s*/);
+    $('mdlList').innerHTML = list.map(t => `<li>${esc(t.charAt(0).toUpperCase() + t.slice(1))}</li>`).join('');
+    const price = num(box.price);
+    $('mdlSum').innerHTML = box.custom
+      ? `<div class="r"><span>Box</span><span>Priced to your budget</span></div><div class="r"><span>Delivery</span><span>Quoted on WhatsApp</span></div>`
+      : `<div class="r"><span>Box</span><span>${naira(price)}</span></div><div class="r muted"><span>Delivery</span><span>Calculated at checkout</span></div>`;
+    $('mdlRules').innerHTML = DELIVERY.rules.map(r => `<li>${esc(r)}</li>`).join('');
+    const msg = box.custom ? 'Hi GiftGrid, I would like to curate a custom box.' : `Hi GiftGrid, I have a question about the ${box.name.replace(/^The /, '')} (${box.price}).`;
+    $('mdlChat').href = wa(msg);
+    $('mdlBuy').hidden = !!box.custom;
+    $('mdlChat').textContent = box.custom ? 'Start on WhatsApp' : 'Chat with a human';
+    show('info');
+    m.classList.add('open'); m.setAttribute('aria-hidden', 'false'); document.documentElement.style.overflow = 'hidden';
+    setTimeout(() => m.querySelector('.mdl-x').focus(), 50);
+  }
+  function close() {
+    m.classList.remove('open'); m.setAttribute('aria-hidden', 'true'); document.documentElement.style.overflow = '';
+    last && last.focus && last.focus();
+  }
+
+  /* ---------------- checkout view ---------------- */
+  const lagosNow = () => new Date(new Date().toLocaleString('en-US', { timeZone: 'Africa/Lagos' }));
+  const ymd = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  function minDate() { const n = lagosNow(); const d = new Date(n); d.setDate(d.getDate() + (n.getHours() < 9 ? 1 : 2)); return d; }
+  function slotsFor(b) {
+    return b.cat === 'Breakfast'
+      ? ['7:30–8:30 a.m.', '8:30–9:30 a.m.', '9:30–11:00 a.m.']
+      : ['9:00 a.m.–12:00 p.m.', '12:00–3:00 p.m.', '3:00–6:00 p.m.'];
+  }
+  function toCheckout() {
+    $('coTitle').textContent = 'Send the ' + box.name.replace(/^The /, '');
+    const md = minDate(); $('co_date').min = ymd(md); if (!$('co_date').value || $('co_date').value < ymd(md)) $('co_date').value = ymd(md);
+    $('co_slot').innerHTML = slotsFor(box).map(s => `<option>${s}</option>`).join('');
+    $('co_zone').innerHTML = '<option value="">Choose the area</option>' + CHECKOUT.zones.map(z => `<option value="${z.id}">${esc(z.name)} · ${naira(z.fee)}</option>`).join('');
+    $('coErr').hidden = true;
+    setupAddress();
+    renderSum();
+    show('co');
+    setTimeout(() => $('co_name').focus(), 60);
+  }
+  function renderSum() {
+    const price = num(box.price);
+    const fee = quote ? quote.fee : null;
+    $('coSum').innerHTML = `<div class="r"><span>${esc(box.name)}</span><span>${naira(price)}</span></div>`
+      + `<div class="r${fee == null ? ' muted' : ''}"><span>Delivery${quote && quote.label ? ' · ' + esc(quote.label) : ''}</span><span>${fee == null ? 'Add the address' : naira(fee)}</span></div>`
+      + `<div class="r tot"><span>Total</span><span>${fee == null ? naira(price) + ' + delivery' : naira(price + fee)}</span></div>`;
+    $('coPay').textContent = fee == null ? 'Pay' : 'Pay ' + naira(price + fee);
+  }
+
+  // distance pricing used when there is no live quote (mirrors netlify/functions/_pricing.js)
+  function estimate(lat, lng) {
+    const R = 6371, t = x => x * Math.PI / 180, h = CHECKOUT.hub, P = CHECKOUT.pricing;
+    const a = Math.sin(t(lat - h.lat) / 2) ** 2 + Math.cos(t(h.lat)) * Math.cos(t(lat)) * Math.sin(t(lng - h.lng) / 2) ** 2;
+    const km = 2 * R * Math.asin(Math.sqrt(a)) * 1.35;   // road-distance factor
+    if (km > P.maxKm) return { ok: false, km };
+    const fee = Math.min(P.max, P.base + Math.max(0, km - P.baseKm) * P.perKm);
+    return { ok: true, km, fee: Math.ceil(fee / 100) * 100 };
+  }
+  async function getQuote(payload) {
+    try {
+      const r = await fetch(CHECKOUT.apiBase + '/quote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      if (r.ok) return await r.json();
+    } catch (e) {}
+    return null;   // no backend (e.g. this preview): fall back to local estimate
+  }
+  async function quoteFromPlace(p) {
+    place = p; quote = null; renderSum();
+    const live = await getQuote({ lat: p.lat, lng: p.lng, address: p.address });
+    if (live && live.ok) quote = { fee: live.fee, label: live.label || (live.km ? Math.round(live.km) + ' km' : ''), ref: live.ref, provider: live.provider };
+    else if (live && live.ok === false) { quote = null; err(live.message || 'We can only deliver within Lagos online. Tap “Chat with a human” and we will sort it out.'); }
+    else { const e = estimate(p.lat, p.lng); if (e.ok) quote = { fee: e.fee, label: Math.round(e.km) + ' km', provider: 'estimate' }; else err('That address is outside our Lagos delivery area. Chat with us and we will arrange it.'); }
+    renderSum();
+  }
+  function useZones() {
+    $('coZoneWrap').hidden = false;
+    $('co_zone').onchange = () => { const z = CHECKOUT.zones.find(z => z.id === $('co_zone').value); quote = z ? { fee: z.fee, label: z.name.split(' (')[0], provider: 'zone', zone: z.id } : null; renderSum(); };
+  }
+  /* address search: real Google suggestions via /api/places (key stays on the server) */
+  let acProv = 'Google', addrBuilt = false, acMode = 'google', acSession = '', acTimer = 0, acItems = [], acSel = -1, acSeq = 0;
+  const acBox = () => $('coAc');
+  function acClose() { acBox().hidden = true; acSel = -1; $('co_addr').setAttribute('aria-expanded', 'false'); }
+  function acRender(list, msg) {
+    const ul = acBox(); acItems = list; acSel = -1;
+    if (!list.length && !msg) return acClose();
+    ul.innerHTML = (msg ? `<li class="ac-msg">${esc(msg)}</li>` : list.map((x, i) => `<li role="option" id="ac${i}" data-i="${i}"><b>${esc(x.main)}</b><span>${esc(x.sub)}</span></li>`).join(''))
+      + `<li class="ac-g" aria-hidden="true">Powered by ${acProv}</li>`;
+    ul.hidden = false; $('co_addr').setAttribute('aria-expanded', 'true');
+  }
+  function acFallback() {
+    acMode = 'zones'; acClose(); useZones();
+    $('co_addr').placeholder = 'House number, street, area';
+    $('coAddrHint').textContent = 'Live address suggestions switch on once the site is deployed with the address key. For now, pick the area below.';
+    $('coAddrHint').hidden = false;
+  }
+  async function acSearch(q) {
+    const my = ++acSeq;
+    try {
+      const r = await fetch(`${CHECKOUT.apiBase}/places?q=${encodeURIComponent(q)}&s=${acSession}`);
+      const j = await r.json();
+      if (my !== acSeq) return;
+      if (!r.ok) throw new Error(j.message);
+      acProv = j.provider === 'geoapify' ? 'Geoapify · © OpenStreetMap' : 'Google';
+      acRender(j.suggestions, j.suggestions.length ? '' : 'No match in Lagos yet. Try the street name and area.');
+    } catch (e) { if (my === acSeq) acFallback(); }
+  }
+  async function acPick(i) {
+    const s = acItems[i]; if (!s) return;
+    acClose(); $('co_addr').value = s.main + (s.sub ? ', ' + s.sub : '');
+    $('co_addr').setAttribute('aria-invalid', 'false');
+    if (s.lat != null) { err(''); return quoteFromPlace({ address: s.address || $('co_addr').value, lat: s.lat, lng: s.lng }); }
+    try {
+      const r = await fetch(`${CHECKOUT.apiBase}/places?id=${encodeURIComponent(s.id)}&s=${acSession}`);
+      const j = await r.json(); if (!r.ok) throw new Error(j.message);
+      acSession = Math.random().toString(36).slice(2) + Date.now().toString(36);   // new billing session after a pick
+      err(''); quoteFromPlace({ address: j.address, lat: j.lat, lng: j.lng });
+    } catch (e) { err('We could not load that address. Please try again, or chat with us.'); }
+  }
+  function setupAddress() {
+    if (addrBuilt) return; addrBuilt = true;
+    acSession = Math.random().toString(36).slice(2) + Date.now().toString(36);
+    const inp = $('co_addr');
+    inp.addEventListener('input', () => {
+      if (acMode !== 'google') return;
+      if (place) { place = null; quote = null; renderSum(); }
+      clearTimeout(acTimer);
+      const q = inp.value.trim();
+      if (q.length < 3) return acClose();
+      acTimer = setTimeout(() => acSearch(q), 220);
+    });
+    inp.addEventListener('keydown', e => {
+      if (acBox().hidden) return;
+      const n = acItems.length;
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault(); if (!n) return;
+        acSel = (acSel + (e.key === 'ArrowDown' ? 1 : -1) + n) % n;
+        acBox().querySelectorAll('[data-i]').forEach((li, i) => li.classList.toggle('on', i === acSel));
+        inp.setAttribute('aria-activedescendant', 'ac' + acSel);
+      } else if (e.key === 'Enter' && acSel > -1) { e.preventDefault(); acPick(acSel); }
+      else if (e.key === 'Escape') { e.stopPropagation(); acClose(); }
+    });
+    inp.addEventListener('blur', () => setTimeout(acClose, 150));
+    acBox().addEventListener('mousedown', e => e.preventDefault());
+    acBox().addEventListener('click', e => { const li = e.target.closest('[data-i]'); if (li) acPick(+li.dataset.i); });
+    // quick probe so the preview (no backend) falls back straight away
+    fetch(`${CHECKOUT.apiBase}/places?q=`).then(r => { if (!r.ok) acFallback(); }).catch(acFallback);
+  }
+  $('co_self').addEventListener('change', e => { $('coRecip').hidden = e.target.checked; });
+
+  function err(msg) { const el = $('coErr'); el.textContent = msg; el.hidden = !msg; if (msg) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
+  const phoneOk = v => /^(\+?234|0)[789][01]\d{8}$/.test(v.replace(/[\s-]/g, ''));
+  function collect() {
+    const v = id => ($(id).value || '').trim();
+    const self = $('co_self').checked;
+    const d = {
+      box: box.img, buyer_name: v('co_name'), buyer_phone: v('co_phone'), buyer_email: v('co_email'),
+      recipient_name: self ? v('co_name') : v('co_rname'), recipient_phone: self ? v('co_phone') : v('co_rphone'),
+      address: place ? place.address : v('co_addr'), lat: place ? place.lat : null, lng: place ? place.lng : null,
+      zone: quote && quote.zone || null, address_extra: v('co_addr2'), date: v('co_date'), slot: v('co_slot'),
+      backup_contact: v('co_backup'), card_message: v('co_note'), instructions: v('co_extra'),
+      quote_ref: quote && quote.ref || null,
+    };
+    const bad = [];
+    const mark = (id, ok) => { $(id).setAttribute('aria-invalid', ok ? 'false' : 'true'); if (!ok) bad.push(id); };
+    mark('co_name', d.buyer_name.length > 1);
+    mark('co_phone', phoneOk(d.buyer_phone));
+    mark('co_email', /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.buyer_email));
+    if (!self) { mark('co_rname', d.recipient_name.length > 1); mark('co_rphone', phoneOk(d.recipient_phone)); }
+    if (!place) mark('co_addr', acMode === 'zones' ? d.address.length > 5 : false);
+    if (!$('coZoneWrap').hidden) mark('co_zone', !!d.zone);
+    mark('co_date', !!d.date && d.date >= $('co_date').min);
+    if (bad.length) { err(bad.length === 1 && bad[0] === 'co_addr' && acMode === 'google' ? 'Start typing the address and pick it from the suggestions so we can price delivery.' : 'Please check the highlighted fields. Phone numbers should look like 0803 000 0000.'); $(bad[0]) && $(bad[0]).focus(); return null; }
+    if (!quote) { err('Add the delivery address so we can work out the delivery fee.'); return null; }
+    err(''); return d;
+  }
+  async function pay(e) {
+    e.preventDefault();
+    const d = collect(); if (!d) return;
+    const btn = $('coPay'); btn.disabled = true; btn.textContent = 'Starting payment…';
+    try {
+      const r = await fetch(CHECKOUT.apiBase + '/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(d) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok && !j.message) throw new Error('Failed to fetch');   // no payment backend here (e.g. preview)
+      if (!r.ok) throw new Error(j.message || 'We could not start the payment. Please try again or chat with us.');
+      if (!window.PaystackPop) await new Promise((res, rej) => { const sc = document.createElement('script'); sc.src = 'https://js.paystack.co/v2/inline.js'; sc.onload = res; sc.onerror = () => rej(new Error('Paystack could not load. Check your connection and try again.')); document.head.appendChild(sc); });
+      const pop = new PaystackPop();
+      pop.resumeTransaction(j.access_code, {
+        onSuccess: tx => confirm(tx.reference || j.reference, d, j),
+        onCancel: () => { btn.disabled = false; renderSum(); err('Payment was cancelled. Your details are still here when you are ready.'); },
+        onError: x => { btn.disabled = false; renderSum(); err((x && x.message) || 'The payment did not go through. Please try again.'); },
+      });
+    } catch (x) {
+      btn.disabled = false; renderSum();
+      const offline = /Failed to fetch|NetworkError|JSON/.test(String(x && x.message));
+      err(offline ? 'Online payment is not switched on in this preview yet. It works once the site is deployed with the Paystack keys. You can still chat with us to order.' : x.message);
+    }
+  }
+  async function confirm(reference, d, j) {
+    let v = null;
+    try { const r = await fetch(CHECKOUT.apiBase + '/verify?reference=' + encodeURIComponent(reference)); v = await r.json(); } catch (e) {}
+    const total = v && v.amount ? v.amount : (j.total || 0);
+    $('coDoneText').textContent = `We have emailed a receipt to ${d.buyer_email}. ${d.recipient_name} will receive the ${box.name.replace(/^The /, '')} on ${new Date(d.date + 'T12:00').toLocaleDateString('en-NG', { weekday: 'long', day: 'numeric', month: 'long' })}, ${d.slot}.`;
+    $('coDoneSum').innerHTML = `<div class="r"><span>Order</span><span>${esc(j.order_id || reference)}</span></div><div class="r tot"><span>Paid</span><span>${naira(total)}</span></div>`;
+    $('coDoneChat').href = wa(`Hi GiftGrid, about my order ${j.order_id || reference}.`);
+    $('coPay').disabled = false;
+    show('done');
+  }
+
+  $('mdlBuy').addEventListener('click', toCheckout);
+  $('coBack').addEventListener('click', () => show('info'));
+  $('coForm').addEventListener('submit', pay);
+  $('coForm').addEventListener('input', e => { if (e.target.getAttribute('aria-invalid') === 'true') e.target.setAttribute('aria-invalid', 'false'); });
+  $('co_addr').addEventListener('input', () => { if (!$('coZoneWrap').hidden) return; place = null; });
+
+  window.__openBox = open;
+  document.getElementById('customBtn').addEventListener('click', () => open(COLLECTION.length - 1));
+  const rail = document.getElementById('rail');
+  rail.addEventListener('click', e => { const c = e.target.closest('.bx'); if (c) open(+c.dataset.i); });
+  rail.addEventListener('keydown', e => { const c = e.target.closest('.bx'); if (c && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); open(+c.dataset.i); } });
+  m.addEventListener('click', e => { if (e.target.closest('[data-close]')) close(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape' && m.classList.contains('open')) close(); });
+})()
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const gsap = window.gsap, ScrollTrigger = window.ScrollTrigger;
+gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.config({ ignoreMobileResize: true });
+const isMobile = matchMedia('(max-width: 900px)').matches;
+{ const btn = document.getElementById('menuBtn'), sheet = document.getElementById('sheet');
+  const set = o => { document.body.classList.toggle('menu-open', o); sheet.classList.toggle('open', o); sheet.setAttribute('aria-hidden', !o); btn.setAttribute('aria-expanded', o); btn.setAttribute('aria-label', o ? 'Close menu' : 'Open menu'); };
+  btn.addEventListener('click', () => set(!sheet.classList.contains('open')));
+  sheet.addEventListener('click', e => { if (e.target.closest('a')) set(false); });
+  addEventListener('keydown', e => { if (e.key === 'Escape') set(false); }); }
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const hero = document.getElementById('hero');
+const canvas = document.getElementById('gl');
+
+/* ---------- renderer ---------- */
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile ? 1.75 : 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
+scene.add(new THREE.HemisphereLight(0xfff6e6, 0x1a2a12, 0.6));
+const sun = new THREE.DirectionalLight(0xfff1dc, 2.4);
+sun.position.set(-3.5, 7, 3.5); sun.castShadow = true;
+sun.shadow.mapSize.set(isMobile ? 1024 : 2048, isMobile ? 1024 : 2048); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.02; sun.shadow.radius = 6;
+Object.assign(sun.shadow.camera, { left: -3.5, right: 3.5, top: 3.5, bottom: -3.5, near: 1, far: 20 });
+scene.add(sun);
+
+/* ---------- procedural textures ---------- */
+function kraftTex(base, w = 1024) {
+  const c = document.createElement('canvas'); c.width = c.height = w; const x = c.getContext('2d');
+  x.fillStyle = base; x.fillRect(0, 0, w, w);
+  const img = x.getImageData(0, 0, w, w), d = img.data;
+  for (let i = 0; i < d.length; i += 4) { const n = (Math.random() - 0.5) * 18; d[i] += n; d[i+1] += n * 0.9; d[i+2] += n * 0.7; }
+  x.putImageData(img, 0, 0);
+  for (let i = 0; i < 2600; i++) {
+    const px = Math.random() * w, py = Math.random() * w, l = 4 + Math.random() * 18, a = Math.random() * Math.PI;
+    x.strokeStyle = Math.random() < 0.5 ? 'rgba(80,50,20,.10)' : 'rgba(255,235,200,.10)';
+    x.lineWidth = 0.6 + Math.random(); x.beginPath(); x.moveTo(px, py); x.lineTo(px + Math.cos(a) * l, py + Math.sin(a) * l); x.stroke();
+  }
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 8; return t;
+}
+function juteTex() {
+  const w = 512, c = document.createElement('canvas'); c.width = c.height = w; const x = c.getContext('2d');
+  x.fillStyle = '#6E5434'; x.fillRect(0, 0, w, w);
+  const s = 8;
+  for (let i = 0; i < w; i += s) {
+    for (let j = 0; j < w; j += s) {
+      const over = ((i + j) / s) % 2 === 0, k = 0.85 + Math.random() * 0.3;
+      x.fillStyle = `rgb(${Math.round(176*k)},${Math.round(142*k)},${Math.round(96*k)})`;
+      if (over) x.fillRect(i + 1, j, s - 2, s); else x.fillRect(i, j + 1, s, s - 2);
+    }
+  }
+  for (let i = 0; i < 900; i++) { x.strokeStyle = 'rgba(220,190,140,.25)'; x.lineWidth = 0.7; const px = Math.random()*w, py = Math.random()*w; x.beginPath(); x.moveTo(px, py); x.lineTo(px + (Math.random()-0.5)*14, py + (Math.random()-0.5)*14); x.stroke(); }
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(5, 4); t.anisotropy = 8; return t;
+}
+function printTex() {
+  const w = 1024, h = 860, c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d');
+  x.clearRect(0, 0, w, h);
+  x.fillStyle = 'rgba(28,48,22,.88)'; x.textAlign = 'center'; x.textBaseline = 'middle';
+  // mark: open box with four flaps
+  x.save(); x.translate(w/2, h*0.38); x.strokeStyle = 'rgba(28,48,22,.88)'; x.lineWidth = 10; x.lineJoin = 'round';
+  x.beginPath(); x.moveTo(-70, -10); x.lineTo(0, -45); x.lineTo(70, -10); x.lineTo(0, 25); x.closePath(); x.stroke();
+  x.beginPath(); x.moveTo(-70, -10); x.lineTo(-70, 60); x.lineTo(0, 95); x.lineTo(70, 60); x.lineTo(70, -10); x.moveTo(0, 25); x.lineTo(0, 95); x.stroke();
+  x.beginPath(); x.moveTo(-70, -10); x.lineTo(-115, -45); x.moveTo(70, -10); x.lineTo(115, -45); x.moveTo(0, -45); x.lineTo(-40, -85); x.moveTo(0, -45); x.lineTo(40, -85); x.stroke();
+  x.restore();
+  x.font = '600 108px Fraunces, Georgia, serif'; x.fillText('Gift-Grid', w/2, h*0.68);
+  x.font = '500 30px Figtree, sans-serif'; x.letterSpacing = '8px'; x.fillText('UNBOX THE EMOTION', w/2, h*0.82);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;
+}
+
+/* ---------- loading ---------- */
+const manager = new THREE.LoadingManager();
+let loadP = 0; manager.onProgress = (_u, l, t) => { loadP = l / t; };
+const loader = new THREE.TextureLoader(manager);
+
+/* ---------- the box: kraft mailer, lid hinged at the back ---------- */
+const W = 2.6, D = 2.18, H = 0.74, T = 0.035;
+const kOut = new THREE.MeshStandardMaterial({ map: kraftTex('#B98D5E'), roughness: 0.88, metalness: 0, envMapIntensity: 0.55 });
+const kIn = new THREE.MeshStandardMaterial({ map: kraftTex('#C9A273'), roughness: 0.92, metalness: 0, envMapIntensity: 0.5 });
+const kEdge = new THREE.MeshStandardMaterial({ color: 0x9E7448, roughness: 0.95, envMapIntensity: 0.4 });
+const mats = (inner) => [kEdge, kEdge, kOut, kIn, inner ? kIn : kOut, inner ? kOut : kIn]; // +x,-x,+y,-y,+z,-z
+const box = new THREE.Group(); scene.add(box);
+const part = (w, h, d, m, x, y, z) => { const me = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); me.position.set(x, y, z); me.castShadow = me.receiveShadow = true; box.add(me); return me; };
+part(W, T, D, [kEdge, kEdge, kIn, kOut, kEdge, kEdge], 0, T/2, 0);
+part(W, H, T, [kEdge, kEdge, kEdge, kEdge, kOut, kIn], 0, H/2, D/2 - T/2);
+part(W, H, T, [kEdge, kEdge, kEdge, kEdge, kIn, kOut], 0, H/2, -D/2 + T/2);
+part(T, H, D - 2*T, [kOut, kIn, kEdge, kEdge, kEdge, kEdge], W/2 - T/2, H/2, 0);
+part(T, H, D - 2*T, [kIn, kOut, kEdge, kEdge, kEdge, kEdge], -W/2 + T/2, H/2, 0);
+// jute lining
+const jute = new THREE.MeshStandardMaterial({ map: juteTex(), roughness: 1, envMapIntensity: 0.35 });
+const lining = new THREE.Mesh(new THREE.PlaneGeometry(W - 2*T, D - 2*T), jute);
+lining.rotation.x = -Math.PI/2; lining.position.y = T + 0.003; lining.receiveShadow = true; box.add(lining);
+[[W - 2*T, -1], [W - 2*T, 1]].forEach(([w, s]) => {
+  const p = new THREE.Mesh(new THREE.PlaneGeometry(w, H * 0.72), jute);
+  p.position.set(0, T + H * 0.36, s * (D/2 - T - 0.004)); p.rotation.y = s > 0 ? Math.PI : 0; p.receiveShadow = true; box.add(p);
+});
+// lid
+const lid = new THREE.Group(); lid.name = 'lid'; lid.position.set(0, H, -D/2); box.add(lid);
+const LW = W + 0.03, LD = D + 0.03, FL = H * 0.86;
+const lidPart = (w, h, d, m, x, y, z) => { const me = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); me.position.set(x, y, z); me.castShadow = me.receiveShadow = true; lid.add(me); return me; };
+lidPart(LW, T, LD, [kEdge, kEdge, kOut, kIn, kEdge, kEdge], 0, T/2, LD/2 - 0.015);
+lidPart(LW, FL, T, [kEdge, kEdge, kEdge, kEdge, kOut, kIn], 0, T - FL/2, LD - 0.015 + T/2);
+[-1, 1].forEach(s => lidPart(T, FL * 0.78, LD * 0.86, [kIn, kIn, kEdge, kEdge, kEdge, kEdge], s * (W/2 - T * 1.6), T - FL * 0.39, LD * 0.5));
+const print = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.5 * 860/1024), new THREE.MeshStandardMaterial({ map: printTex(), transparent: true, roughness: 0.9, polygonOffset: true, polygonOffsetFactor: -2 }));
+print.rotation.x = -Math.PI/2; print.position.set(0, T + 0.002, LD/2); // unbranded box: print not added
+// ground
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), new THREE.ShadowMaterial({ opacity: 0.42 }));
+ground.rotation.x = -Math.PI/2; ground.position.y = -0.001; ground.receiveShadow = true; box.add(ground);
+
+/* ---------- products (real items, laid out like the reference box) ---------- */
+// ref photo coords: interior x 300..1660, y 260..1400 → box floor; th = how high the item sits
+const REF = { x0: 300, x1: 1660, y0: 260, y1: 1400 };
+const P = [
+  { n: 'coffeemate', cx: 476, cy: 995, w: 332, h: 856, th: 0.30, s: [-0.56, 0.04], sm: [-0.72, 0.10], ss: 0.25, rot: -12 },
+  { n: 'gold',       cx: 792, cy: 1030, w: 281, h: 778, th: 0.26, s: [ 0.62, 0.20], sm: [ 0.72, 0.12], ss: 0.21, rot: 10 },
+  { n: 'cappuccino', cx: 1300, cy: 1175, w: 681, h: 375, th: 0.13, s: [ 0.80,-0.56], sm: [ 0.66,-0.40], ss: 0.21, rot: -8 },
+  { n: 'tuc',        cx: 1300, cy: 848, w: 635, h: 257, th: 0.12, s: [-0.70,-0.54], sm: [-0.66,-0.40], ss: 0.25, rot: 9 },
+  { n: 'didian',     cx: 1445, cy: 490, w: 345, h: 463, th: 0.11, s: [ 0.78, 0.60], sm: [ 0.70, 0.44], ss: 0.17, rot: 14 },
+  { n: 'mcvities',   cx: 1111, cy: 490, w: 261, h: 431, th: 0.10, s: [-0.78, 0.58], sm: [-0.70, 0.44], ss: 0.19, rot: -16 },
+  { n: 'dates',      cx: 600, cy: 435, w: 644, h: 329, th: 0.16, s: [ 0.50,-0.24], sm: [ 0.02, 0.32], ss: 0.17, rot: 6 },
+];
+const IW = W - 2*T, ID = D - 2*T, flatQ = new THREE.Quaternion().setFromEuler(new THREE.Euler(-Math.PI/2, 0, 0));
+/* real 3D Coffee-mate tub: lathe from the measured silhouette, label unwrapped from the product views */
+const CM_PROFILE = [[0.1915, 0.0], [0.2053, 0.0213], [0.2063, 0.0426], [0.2069, 0.0638], [0.2075, 0.0851], [0.2083, 0.1064], [0.2092, 0.1277], [0.21, 0.1489], [0.2109, 0.1702], [0.2118, 0.1915], [0.2126, 0.2128], [0.2132, 0.234], [0.2139, 0.2553], [0.2145, 0.2766], [0.2152, 0.2979], [0.2155, 0.3191], [0.2155, 0.3404], [0.2155, 0.3617], [0.2155, 0.383], [0.2155, 0.4043], [0.2148, 0.4255], [0.2137, 0.4468], [0.2126, 0.4681], [0.2115, 0.4894], [0.21, 0.5106], [0.2084, 0.5319], [0.2067, 0.5532], [0.2051, 0.5745], [0.2042, 0.5957], [0.2037, 0.617], [0.2031, 0.6383], [0.2026, 0.6596], [0.2033, 0.6809], [0.2044, 0.7021], [0.2055, 0.7234], [0.2066, 0.7447], [0.209, 0.766], [0.2117, 0.7872], [0.2144, 0.8085], [0.2152, 0.8298], [0.2148, 0.8511], [0.215, 0.8723], [0.2175, 0.8936], [0.2172, 0.9149], [0.2168, 0.9362], [0.215, 0.9574], [0.2114, 0.9787], [0.1828, 1.0]];
+function buildTub(height) {
+  const tl = n => { const t = loader.load(n); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; };
+  const g = new THREE.Group();
+  const pts = CM_PROFILE.map(([r, y]) => new THREE.Vector2(r * height, (y - 0.5) * height));
+  const body = new THREE.Mesh(new THREE.LatheGeometry(pts, 96, -Math.PI, Math.PI * 2),
+    new THREE.MeshStandardMaterial({ map: tl('img/cm-label.webp'), roughness: 0.38, metalness: 0, envMapIntensity: 0.75 }));
+  const rTop = CM_PROFILE[CM_PROFILE.length - 1][0] * height;
+  const cap = new THREE.Mesh(new THREE.CircleGeometry(rTop * 1.02, 64), new THREE.MeshStandardMaterial({ map: tl('img/cm-top.webp'), roughness: 0.45, envMapIntensity: 0.7 }));
+  cap.rotation.x = -Math.PI / 2; cap.position.y = height / 2 - 0.002;
+  const base = new THREE.Mesh(new THREE.CircleGeometry(CM_PROFILE[0][0] * height, 64), new THREE.MeshStandardMaterial({ color: 0x5a2f1c, roughness: 0.6 }));
+  base.rotation.x = Math.PI / 2; base.position.y = -height / 2 + 0.002;
+  [body, cap, base].forEach(m => { m.castShadow = m.receiveShadow = true; g.add(m); });
+  g.userData.radius = Math.max(...CM_PROFILE.map(p => p[0])) * height;
+  return g;
+}
+/* real 3D Nescafé Gold jar: rounded-square glass jar, label unwrapped from the product views */
+const NG = {"n": 4.2, "aspect": 0.4022633744855967, "profile": [[0.84, 0.0], [0.92, 0.0103], [0.965, 0.0267], [0.985, 0.0494], [0.985, 0.4095], [0.985, 0.7798], [0.985, 0.7984], [1.0, 0.8086], [1.0, 0.9856], [0.99, 0.9949], [0.955, 1.0]]};
+function buildJar(height) {
+  const tl = n => { const t = loader.load(n); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; };
+  const N = NG.n, hw = NG.aspect * height / 2, SEG = 160;
+  const se = ph => { const s = Math.sin(ph), c = Math.cos(ph); return [Math.sign(s) * Math.abs(s) ** (2 / N), Math.sign(c) * Math.abs(c) ** (2 / N)]; };
+  // arc-length so the label is not stretched at the corners
+  const ring = [], arc = [0];
+  for (let i = 0; i <= SEG; i++) { ring.push(se(-Math.PI + 2 * Math.PI * i / SEG)); if (i) arc.push(arc[i - 1] + Math.hypot(ring[i][0] - ring[i - 1][0], ring[i][1] - ring[i - 1][1])); }
+  const rows = []; for (let k = 0; k <= 60; k++) { const v = k / 60; let r = NG.profile[0][0];
+    for (let j = 1; j < NG.profile.length; j++) { const [r0, v0] = NG.profile[j - 1], [r1, v1] = NG.profile[j]; if (v <= v1) { r = r0 + (r1 - r0) * (v - v0) / Math.max(1e-6, v1 - v0); break; } r = r1; }
+    rows.push([r, v]); }
+  const pos = [], uv = [], idx = [];
+  rows.forEach(([r, v]) => ring.forEach(([x, z], i) => { pos.push(x * hw * r, (v - 0.5) * height, z * hw * r); uv.push(arc[i] / arc[SEG], v); }));
+  const C = SEG + 1;
+  for (let k = 0; k < rows.length - 1; k++) for (let i = 0; i < SEG; i++) { const a = k * C + i, b = a + 1, c = a + C, d = c + 1; idx.push(a, b, d, a, d, c); }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setIndex(idx); g.computeVertexNormals();
+  const grp = new THREE.Group();
+  const body = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ map: tl('img/ng-label.webp'), roughness: 0.3, metalness: 0.08, envMapIntensity: 0.9 }));
+  const shape = new THREE.Shape(); ring.forEach(([x, z], i) => i ? shape.lineTo(x * hw * 0.955, z * hw * 0.955) : shape.moveTo(x * hw * 0.955, z * hw * 0.955));
+  const capG = new THREE.ShapeGeometry(shape, 1); const cp = capG.attributes.position, cu = capG.attributes.uv;
+  for (let i = 0; i < cp.count; i++) cu.setXY(i, cp.getX(i) / (2 * hw) + 0.5, cp.getY(i) / (2 * hw) + 0.5);
+  const cap = new THREE.Mesh(capG, new THREE.MeshStandardMaterial({ map: tl('img/ng-top.webp'), roughness: 0.35, metalness: 0.55, envMapIntensity: 1.1 }));
+  cap.rotation.x = -Math.PI / 2; cap.position.y = height / 2 - 0.001;
+  const base = new THREE.Mesh(capG.clone(), new THREE.MeshStandardMaterial({ color: 0x4a2c16, roughness: 0.4 }));
+  base.rotation.x = Math.PI / 2; base.scale.setScalar(0.88); base.position.y = -height / 2 + 0.001;
+  [body, cap, base].forEach(m => { m.castShadow = m.receiveShadow = true; grp.add(m); });
+  grp.userData.radius = hw;
+  return grp;
+}
+/* real 3D McVitie's roll: rounded tube with front, back and side artwork wrapped around */
+const MV = {"yc": [0.4948, 0.4993, 0.4995, 0.5007, 0.5, 0.4989, 0.4984, 0.4982, 0.4997, 0.4984, 0.4985, 0.4983, 0.4989, 0.4995, 0.4986, 0.4993, 0.5, 0.5, 0.4997, 0.5, 0.5007, 0.5002, 0.4993, 0.4999, 0.5003, 0.5009, 0.5, 0.4993, 0.4991, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.4991, 0.4991, 0.5, 0.5, 0.5009, 0.5, 0.4994, 0.4994, 0.5, 0.5006, 0.4997, 0.5, 0.5, 0.5, 0.5, 0.4994, 0.4989, 0.4984, 0.4987, 0.4989, 0.4984, 0.4979, 0.498, 0.4988, 0.4997, 0.4992, 0.4991, 0.4986], "a": [0.4857, 0.4975, 0.4977, 0.4989, 0.4982, 0.4949, 0.4847, 0.4685, 0.4493, 0.4243, 0.3961, 0.3627, 0.3465, 0.3414, 0.3391, 0.3399, 0.341, 0.341, 0.3407, 0.341, 0.342, 0.3426, 0.3421, 0.3427, 0.3431, 0.3436, 0.3445, 0.3438, 0.3436, 0.3445, 0.3445, 0.3445, 0.3445, 0.3445, 0.3445, 0.3445, 0.3436, 0.3436, 0.3445, 0.3445, 0.3436, 0.3428, 0.3421, 0.3421, 0.3427, 0.342, 0.3407, 0.341, 0.341, 0.341, 0.341, 0.3425, 0.3491, 0.3642, 0.3959, 0.425, 0.4481, 0.4674, 0.483, 0.4943, 0.4979, 0.4972, 0.4974, 0.4969], "ar": 0.5952};
+function buildRoll(L, depthRatio = 0.62) {
+  const t = loader.load('img/mcv-roll.webp'); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+  const h = L * MV.ar, NX = 96, NT = 48, n = MV.a.length;
+  const samp = (arr, u) => { const f = u * (n - 1), i = Math.min(n - 2, Math.floor(f)); return arr[i] + (arr[i + 1] - arr[i]) * (f - i); };
+  const pos = [], uv = [], idx = [];
+  for (let j = 0; j <= NT; j++) for (let i = 0; i <= NX; i++) {
+    const u = i / NX, th = -Math.PI + 2 * Math.PI * j / NT;
+    const a = samp(MV.a, u) * h, yc = (0.5 - samp(MV.yc, u)) * h;
+    const ex = Math.min(1, Math.max(0, (0.5 - Math.abs(u - 0.5)) / 0.13)), e = ex * ex * (3 - 2 * ex);
+    const b = depthRatio * h / 2 * e;
+    pos.push((u - 0.5) * L, yc + a * Math.sin(th), b * Math.cos(th));
+    uv.push(u, 1 - j / NT);
+  }
+  const C = NX + 1;
+  for (let j = 0; j < NT; j++) for (let i = 0; i < NX; i++) { const a0 = j * C + i, b0 = a0 + 1, c0 = a0 + C, d0 = c0 + 1; idx.push(a0, d0, b0, a0, c0, d0); }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setIndex(idx); g.computeVertexNormals();
+  const mesh = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ map: t, roughness: 0.42, metalness: 0.05, envMapIntensity: 0.6, side: THREE.DoubleSide }));
+  mesh.castShadow = mesh.receiveShadow = true;
+  const grp = new THREE.Group(); grp.add(mesh);
+  grp.userData.radius = depthRatio * h / 2; grp.userData.axis = new THREE.Vector3(1, 0, 0);
+  return grp;
+}
+/* real 3D TUC pack: pillow-shaped wrapper with crimped ends, front and back artwork */
+function buildPack(w, h, front, back, crimp = 0.06, thick = 0.45) {
+  const tl = n => { const t = loader.load(n); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; };
+  const NX = 72, NY = 24, depth = thick * h;
+  const face = (sign, img) => {
+    const pos = [], uv = [], idx = [];
+    for (let j = 0; j <= NY; j++) for (let i = 0; i <= NX; i++) {
+      const u = i / NX, v = j / NY, x = (u - 0.5) * w, y = (v - 0.5) * h;
+      const ex = Math.min(1, Math.max(0, (0.5 - Math.abs(u - 0.5)) / (crimp * 1.6)));
+      const fx = ex * ex * (3 - 2 * ex);
+      const gy = Math.pow(Math.max(0, 1 - Math.pow(2 * v - 1, 2)), 0.32);
+      pos.push(x, y, sign * depth / 2 * fx * gy);
+      uv.push(u, sign > 0 ? v : 1 - v);
+    }
+    const C = NX + 1;
+    for (let j = 0; j < NY; j++) for (let i = 0; i < NX; i++) {
+      const a = j * C + i, b = a + 1, c = a + C, d = c + 1;
+      if (sign > 0) idx.push(a, b, d, a, d, c); else idx.push(a, d, b, a, c, d);
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setIndex(idx); g.computeVertexNormals();
+    const map = tl(img);
+    const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ map, alphaTest: 0.5, roughness: 0.5, metalness: 0, color: 0xe6e6e6, envMapIntensity: 0.4 }));
+    m.castShadow = m.receiveShadow = true;
+    m.customDepthMaterial = new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking, map, alphaTest: 0.5 });
+    return m;
+  };
+  const grp = new THREE.Group(); grp.add(face(1, front), face(-1, back));
+  grp.userData.radius = depth / 2; grp.userData.axis = new THREE.Vector3(1, 0, 0); grp.userData.roll = true;
+  return grp;
+}
+/* real 3D Nescafé Cappuccino carton: rigid box with front, side and back artwork */
+function buildCarton(L) {
+  const tl = n => { const t = loader.load(n); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; };
+  const w = L * 0.586, dp = w * 0.40;
+  const card = (map) => new THREE.MeshStandardMaterial({ map, roughness: 0.55, metalness: 0.05, envMapIntensity: 0.55 });
+  const side = tl('img/cap-side.webp'), plain = new THREE.MeshStandardMaterial({ color: 0xd1c29c, roughness: 0.55, metalness: 0.1, envMapIntensity: 0.55 });
+  const mats = [card(side), card(side), plain, plain, card(tl('img/cap-front.webp')), card(tl('img/cap-back.webp'))]; // +x,-x,+y,-y,+z,-z
+  const geo = new THREE.BoxGeometry(w, L, dp, 1, 1, 1);
+  const m = new THREE.Mesh(geo, mats); m.castShadow = m.receiveShadow = true;
+  const grp = new THREE.Group(); grp.add(m);
+  grp.userData.radius = dp / 2; grp.userData.endZ = Math.PI / 2;   // lies front-up, top pointing left like the reference box
+  return grp;
+}
+/* real 3D Hajor Date Powder jar: lathe from the measured silhouette, gold screw lid */
+const DP_PROFILE = [[0.1133, 0.0], [0.188, 0.0213], [0.2326, 0.0426], [0.2567, 0.0638], [0.2678, 0.0851], [0.275, 0.1064], [0.2754, 0.1277], [0.2758, 0.1489], [0.2762, 0.1702], [0.2767, 0.1915], [0.2771, 0.2128], [0.2775, 0.234], [0.2779, 0.2553], [0.2783, 0.2766], [0.2787, 0.2979], [0.2791, 0.3191], [0.2796, 0.3404], [0.28, 0.3617], [0.2804, 0.383], [0.2797, 0.4043], [0.2787, 0.4255], [0.2776, 0.4468], [0.2766, 0.4681], [0.2756, 0.4894], [0.2745, 0.5106], [0.2735, 0.5319], [0.2724, 0.5532], [0.2714, 0.5745], [0.2704, 0.5957], [0.2693, 0.617], [0.2683, 0.6383], [0.2672, 0.6596], [0.2663, 0.6809], [0.2663, 0.7021], [0.2663, 0.7234], [0.2663, 0.7447], [0.2663, 0.766], [0.2663, 0.7872], [0.2663, 0.8085], [0.2629, 0.8298], [0.251, 0.8511], [0.2419, 0.8723], [0.2461, 0.8936], [0.2615, 0.9149], [0.264, 0.9362], [0.2646, 0.9574], [0.2649, 0.9787], [0.2635, 1.0]];
+function buildDateJar(height) {
+  const tl = n => { const t = loader.load(n); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; };
+  const g = new THREE.Group();
+  const pts = DP_PROFILE.map(([r, y]) => new THREE.Vector2(Math.max(0.001, r * height), (y - 0.5) * height));
+  const body = new THREE.Mesh(new THREE.LatheGeometry(pts, 96, -Math.PI, Math.PI * 2),
+    new THREE.MeshStandardMaterial({ map: tl('img/dp-label.webp'), roughness: 0.45, metalness: 0, envMapIntensity: 0.55 }));
+  const rTop = DP_PROFILE[DP_PROFILE.length - 1][0] * height;
+  const cap = new THREE.Mesh(new THREE.CircleGeometry(rTop, 64), new THREE.MeshStandardMaterial({ map: tl('img/dp-top.webp'), roughness: 0.3, metalness: 0.6, envMapIntensity: 1.1 }));
+  cap.rotation.x = -Math.PI / 2; cap.position.y = height / 2 - 0.004;
+  const base = new THREE.Mesh(new THREE.CircleGeometry(DP_PROFILE[0][0] * height, 64), new THREE.MeshStandardMaterial({ color: 0xb7793a, roughness: 0.6 }));
+  base.rotation.x = Math.PI / 2; base.position.y = -height / 2 + 0.002;
+  [body, cap, base].forEach(m => { m.castShadow = m.receiveShadow = true; g.add(m); });
+  g.userData.radius = Math.max(...DP_PROFILE.map(p => p[0])) * height;
+  g.userData.endZ = Math.PI / 2;   // lies across the top row, label up
+  return g;
+}
+const items = P.map((d, i) => {
+  if (d.n === 'cappuccino') {
+    const L = d.w / (REF.x1 - REF.x0) * IW * 0.94;
+    const mesh = buildCarton(L); scene.add(mesh);
+    const fx = ((d.cx - REF.x0) / (REF.x1 - REF.x0) - 0.5) * IW, fz = ((d.cy - REF.y0) / (REF.y1 - REF.y0) - 0.5) * ID;
+    return { d, mesh, is3d: true, fw: L * 0.586, fh: L, local: new THREE.Vector3(fx, T + mesh.userData.radius + 0.004, fz), p: { v: 0 }, phase: i * 1.37 };
+  }
+  if (d.n === 'dates') {
+    const L = d.w / (REF.x1 - REF.x0) * IW * 0.9;
+    const mesh = buildDateJar(L); scene.add(mesh);
+    const fx = ((d.cx - REF.x0) / (REF.x1 - REF.x0) - 0.5) * IW, fz = ((d.cy - REF.y0) / (REF.y1 - REF.y0) - 0.5) * ID;
+    return { d, mesh, is3d: true, fw: L, fh: L, local: new THREE.Vector3(fx, T + mesh.userData.radius + 0.004, fz), p: { v: 0 }, phase: i * 1.37 };
+  }
+  if (d.n === 'mcvities') {
+    const L = d.h / (REF.y1 - REF.y0) * ID * 1.02, h = L * 0.594;
+    const mesh = buildRoll(L, 0.62); scene.add(mesh);
+    mesh.userData.endZ = Math.PI / 2;   // stands lengthwise in its slot, like the reference box
+    const fx = ((d.cx - REF.x0) / (REF.x1 - REF.x0) - 0.5) * IW, fz = ((d.cy - REF.y0) / (REF.y1 - REF.y0) - 0.5) * ID;
+    return { d, mesh, is3d: true, fw: L, fh: h, local: new THREE.Vector3(fx, T + mesh.userData.radius + 0.006, fz), p: { v: 0 }, phase: i * 1.37 };
+  }
+  if (d.n === 'didian') {
+    const L = d.h / (REF.y1 - REF.y0) * ID * 0.95, h = L * 0.785;
+    const mesh = buildPack(L, h, 'img/did-front.webp', 'img/did-back.webp', 0.08, 0.3); scene.add(mesh);
+    mesh.userData.endZ = Math.PI / 2;   // lies with its crimped ends top and bottom, like the reference box
+    const fx = ((d.cx - REF.x0) / (REF.x1 - REF.x0) - 0.5) * IW, fz = ((d.cy - REF.y0) / (REF.y1 - REF.y0) - 0.5) * ID;
+    return { d, mesh, is3d: true, fw: L, fh: h, local: new THREE.Vector3(fx, T + mesh.userData.radius + 0.006, fz), p: { v: 0 }, phase: i * 1.37 };
+  }
+  if (d.n === 'tuc') {
+    const fw = d.w / (REF.x1 - REF.x0) * IW * 1.04, fh = fw * 0.389;
+    const mesh = buildPack(fw, fh, 'img/tuc-front.webp', 'img/tuc-back.webp'); scene.add(mesh);
+    const fx = ((d.cx - REF.x0) / (REF.x1 - REF.x0) - 0.5) * IW, fz = ((d.cy - REF.y0) / (REF.y1 - REF.y0) - 0.5) * ID;
+    return { d, mesh, is3d: true, fw, fh, local: new THREE.Vector3(fx, T + mesh.userData.radius + 0.006, fz), p: { v: 0 }, phase: i * 1.37 };
+  }
+  if (d.n === 'coffeemate' || d.n === 'gold') {
+    const fh = d.h / (REF.y1 - REF.y0) * ID * 0.9;
+    const mesh = d.n === 'gold' ? buildJar(fh) : buildTub(fh); scene.add(mesh);
+    const fx = ((d.cx - REF.x0) / (REF.x1 - REF.x0) - 0.5) * IW, fz = ((d.cy - REF.y0) / (REF.y1 - REF.y0) - 0.5) * ID;
+    return { d, mesh, is3d: true, fw: fh, fh, local: new THREE.Vector3(fx, T + mesh.userData.radius + 0.004, fz), p: { v: 0 }, phase: i * 1.37 };
+  }
+  const t = loader.load(`img/c-${d.n}.webp`); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+  const mat = new THREE.MeshStandardMaterial({ map: t, alphaTest: 0.4, roughness: 0.55, metalness: 0, envMapIntensity: 0.55, side: THREE.DoubleSide });
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), mat);
+  mesh.castShadow = true; mesh.receiveShadow = true;
+  mesh.customDepthMaterial = new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking, map: t, alphaTest: 0.4 });
+  scene.add(mesh);
+  const fw = d.w / (REF.x1 - REF.x0) * IW, fh = d.h / (REF.y1 - REF.y0) * ID;
+  const fx = ((d.cx - REF.x0) / (REF.x1 - REF.x0) - 0.5) * IW, fz = ((d.cy - REF.y0) / (REF.y1 - REF.y0) - 0.5) * ID;
+  return { d, mesh, fw, fh, local: new THREE.Vector3(fx, T + d.th + i * 0.002, fz), p: { v: 0 }, phase: i * 1.37 };
+});
+
+/* ---------- state + camera keys ---------- */
+const S = { intro: 0, cam1: 0, cam2: 0, lid: 0, shake: 0, mx: 0, my: 0 };
+const V = { w: 1, h: 1, aspect: 1, mobile: false, k: 1 };
+const LID_OPEN = -1.95;
+const K = {
+  a: { pos: new THREE.Vector3(0, 3.9, 11.4), look: new THREE.Vector3(0, 2.55, 0) },
+  b: { pos: new THREE.Vector3(0, 9.3, 1.2), look: new THREE.Vector3(0, 0.1, -0.55) },
+  c: { pos: new THREE.Vector3(3.3, 3.2, 5.6), look: new THREE.Vector3(0, 0.45, 0) },
+};
+function layout() {
+  V.w = hero.clientWidth; V.h = hero.clientHeight; V.aspect = V.w / V.h; V.mobile = V.aspect < 0.9;
+  V.k = V.aspect < 1.35 ? Math.min(2.1, 1.35 / V.aspect) : 1;
+  renderer.setSize(V.w, V.h, false);
+  camera.aspect = V.aspect; camera.updateProjectionMatrix();
+}
+const cp = new THREE.Vector3(), cl = new THREE.Vector3(), tmp = new THREE.Vector3();
+function camAt() {
+  const e1 = S.cam1, e2 = S.cam2;
+  cp.copy(K.a.pos).lerp(K.b.pos, e1).lerp(K.c.pos, e2);
+  cl.copy(K.a.look).lerp(K.b.look, e1).lerp(K.c.look, e2);
+  // pull back on narrow screens
+  tmp.copy(cp).sub(cl).multiplyScalar(V.k); cp.copy(cl).add(tmp);
+  if (V.mobile) { cl.y += 0.15 * (1 - e1); }
+}
+
+/* ---------- per frame ---------- */
+const clock = new THREE.Clock();
+const camUp = new THREE.Vector3(), tagV = new THREE.Vector3();
+const TAG_NAMES = { coffeemate: 'Nestlé Coffee-mate', gold: 'Nescafé Gold', cappuccino: 'Nescafé Cappuccino', tuc: 'TUC Original', didian: 'Didian Crackers', mcvities: "McVitie's Hobnobs", dates: 'Hajor Date Powder' };
+
+const startW = new THREE.Vector3(), endW = new THREE.Vector3(), ctrl = new THREE.Vector3(), ndc = new THREE.Vector3();
+const qY = new THREE.Quaternion(), yAxis = new THREE.Vector3(0, 1, 0);
+const qBill = new THREE.Quaternion(), qEnd = new THREE.Quaternion(), qZ = new THREE.Quaternion(), zAxis = new THREE.Vector3(0, 0, 1);
+const scount = document.getElementById('scount'), strack = document.getElementById('strack'), slabel = document.getElementById('slabel');
+let lastPacked = -1;
+function frame() {
+  const r = hero.getBoundingClientRect();
+  if (r.bottom < 0 || r.top > innerHeight) { requestAnimationFrame(frame); return; }
+  const t = clock.getElapsedTime(), idle = reduce ? 0 : 1;
+  camAt();
+  const sh = S.shake * 0.03 * Math.sin(t * 75);
+  camera.position.set(cp.x + S.mx * 0.3 * (1 - S.cam1 * 0.7) + sh, cp.y + S.my * 0.18 + sh, cp.z);
+  camera.lookAt(cl);
+  camera.updateMatrixWorld();
+  const rise = gsap.parseEase('power3.out')(Math.min(1, S.intro * 1.15));
+  box.position.set(0, -(1 - rise) * 2.2, 0);
+  box.rotation.y = (1 - S.cam1) * (-0.42 + idle * Math.sin(t * 0.35) * 0.04) + S.cam2 * 0.0;
+  box.updateMatrixWorld();
+  lid.rotation.x = LID_OPEN * (1 - S.lid);
+  // products
+  const dist = camera.position.distanceTo(cl) * 0.62;
+  const fovH = 2 * Math.tan(THREE.MathUtils.degToRad(15));
+  let packed = 0;
+  items.forEach((it, i) => {
+    const d = it.d, p = it.p.v, s = V.mobile ? d.sm : d.s;
+    if (p >= 0.999) packed++;
+    const pop = gsap.parseEase('back.out(1.5)')(gsap.utils.clamp(0, 1, S.intro * 1.7 - 0.35 - i * 0.07));
+    ndc.set(s[0] + idle * Math.cos(t * 0.5 + it.phase) * 0.01, s[1] + idle * Math.sin(t * 0.7 + it.phase) * 0.015, 0.5).unproject(camera);
+    startW.copy(ndc).sub(camera.position).normalize().multiplyScalar(dist).add(camera.position);
+    endW.copy(it.local); box.localToWorld(endW);
+    ctrl.copy(startW).lerp(endW, 0.5); ctrl.y = Math.max(startW.y, endW.y) + 1.6;
+    const e = gsap.parseEase('power2.inOut')(p), a = 1 - e;
+    it.mesh.position.set(a*a*startW.x + 2*a*e*ctrl.x + e*e*endW.x, a*a*startW.y + 2*a*e*ctrl.y + e*e*endW.y, a*a*startW.z + 2*a*e*ctrl.z + e*e*endW.z);
+    // size: start = fraction of view height, end = real size in box
+    const startH = (d.ss || 0.18) * (V.mobile ? 0.62 : 1) * dist * fovH;   // longest edge as a share of the view height
+    const sc = startH / Math.max(it.fw, it.fh);
+    const k = THREE.MathUtils.lerp(sc, 1, e) * Math.max(0.0001, pop);
+    it._k = k; it._pop = pop;
+    const land = p > 0.95 ? 1 - Math.sin((p - 0.95) / 0.05 * Math.PI) * 0.06 : 1;
+    if (it.is3d) it.mesh.scale.set(k * (2 - land), k * land, k * (2 - land));
+    else it.mesh.scale.set(it.fw * k * (2 - land), it.fh * k * land, 1);
+    // orientation: face camera while floating, lie flat when packed
+    qBill.copy(camera.quaternion); qZ.setFromAxisAngle(zAxis, THREE.MathUtils.degToRad(d.rot) * (1 - e) + idle * Math.sin(t * 0.6 + it.phase) * 0.05 * (1 - e));
+    qBill.multiply(qZ);
+    if (it.is3d) {
+      const ang = true
+        ? (1 - e) * idle * Math.sin(t * 0.6 + it.phase) * 0.42 + Math.PI * 2 * e   // front faces you, one full roll in flight, lands front-up
+        : (t * 0.55 + it.phase) * idle * (1 - e) + (1 - e) * 0.35;
+      qY.setFromAxisAngle(it.mesh.userData.axis || yAxis, ang); qBill.multiply(qY);
+    }
+    qEnd.copy(box.quaternion).multiply(flatQ);
+    if (it.mesh.userData.endZ) { qZ.setFromAxisAngle(zAxis, it.mesh.userData.endZ); qEnd.multiply(qZ); }
+    it.mesh.quaternion.copy(qBill).slerp(qEnd, gsap.parseEase('power1.inOut')(gsap.utils.clamp(0, 1, (p - 0.25) / 0.7)));
+  });
+  // name tags follow each floating product, gone once it heads for the box
+  camUp.set(0, 1, 0).applyQuaternion(camera.quaternion);
+  items.forEach(it => {
+    const tg = it.tag; if (!tg) return;
+    const show = S.intro >= 1 && it._pop > 0.98 && it.p.v < 0.015 && it.mesh.visible;
+    if (show !== tg._on) { tg._on = show; tg.classList.toggle('on', show); }
+    const above = (V.mobile ? it.d.sm : it.d.s)[1] < 0;   // lower products get their tag on top, clear of the copy and buttons
+    tagV.copy(it.mesh.position).addScaledVector(camUp, (above ? 0.5 : -0.5) * Math.max(it.fw, it.fh) * it._k * 0.62).project(camera);
+    const x = (tagV.x * 0.5 + 0.5) * V.w, y = (-tagV.y * 0.5 + 0.5) * V.h + (above ? -34 : 6);
+    const tx = Math.min(V.w - tg._w - 8, Math.max(8, x - tg._w / 2));
+    tg.style.transform = `translate3d(${tx.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+  });
+  if (packed !== lastPacked) { lastPacked = packed; scount.textContent = packed + '/' + items.length; strack.style.width = (packed / items.length * 100) + '%'; }
+  renderer.render(scene, camera);
+  requestAnimationFrame(frame);
+}
+
+/* ---------- boot ---------- */
+layout();
+addEventListener('resize', () => { layout(); ScrollTrigger.refresh(); });
+addEventListener('pointermove', e => {
+  if (reduce) return;
+  gsap.to(S, { mx: e.clientX / innerWidth - 0.5, my: -(e.clientY / innerHeight - 0.5), duration: 1.2, ease: 'power3.out', overwrite: 'auto' });
+});
+requestAnimationFrame(frame);
+gsap.set('.headline .ln > span', { yPercent: 110 });
+const scrib = document.getElementById('scrib'); const scribLen = scrib.getTotalLength() + 4;
+gsap.set(scrib, { strokeDasharray: scribLen, strokeDashoffset: scribLen });
+
+const lcount = document.getElementById('lcount'), lbar = document.getElementById('lbar');
+const fontsP = document.fonts ? Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 2500))]) : Promise.resolve();
+const texP = new Promise(res => { manager.onLoad = res; setTimeout(res, 3500); });
+const counter = { v: 0 };
+const countTween = gsap.to(counter, { v: 100, duration: 2, ease: 'power1.inOut', onUpdate: () => {
+  const v = Math.min(counter.v, 40 + loadP * 60); lcount.textContent = Math.round(v); lbar.style.width = v + '%';
+}});
+Promise.all([fontsP, texP]).then(() => {
+  try { setupPackDemo(); } catch (e) { console.warn(e); }
+  items.forEach(it => { if (it.is3d) return; const img = it.mesh.material.map.image; if (!img || !img.width) it.mesh.visible = false; });
+  const done = () => {
+    lcount.textContent = '100'; lbar.style.width = '100%';
+    gsap.timeline()
+      .to('#loader', { yPercent: -100, duration: 1, ease: 'expo.inOut', delay: 0.15 })
+      .set('#loader', { display: 'none' })
+      .to('.headline .ln > span', { yPercent: 0, duration: 1.2, stagger: 0.1, ease: 'expo.out' }, '-=0.5')
+      .fromTo('#scrib', { strokeDashoffset: () => scribLen }, { strokeDashoffset: 0, duration: 1.1, ease: 'power2.inOut' }, '-=0.35')
+      .to(S, { intro: 1, duration: reduce ? 0.01 : 2.2, ease: 'power2.out' }, '<')
+      .from(['#heroUi', '#status', '.nav'], { autoAlpha: 0, y: 16, duration: 0.8, stagger: 0.08, ease: 'power3.out' }, '-=1.6');
+    setupScroll();
+  };
+  if (countTween.progress() < 1) countTween.eventCallback('onComplete', done); else done();
+});
+
+/* ---------- step 2: products drop into the box from above, lid closes, loops ---------- */
+function setupPackDemo() {
+  const cv = document.getElementById('gl2'); if (!cv) return;
+  const r2 = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true });
+  r2.setPixelRatio(Math.min(devicePixelRatio, 2));
+  r2.outputColorSpace = THREE.SRGBColorSpace; r2.toneMapping = THREE.ACESFilmicToneMapping; r2.toneMappingExposure = 1.25;
+  r2.shadowMap.enabled = true; r2.shadowMap.type = THREE.PCFSoftShadowMap;
+  const sc2 = new THREE.Scene(); sc2.environment = scene.environment;
+  sc2.add(new THREE.HemisphereLight(0xfff6e6, 0x8a9a78, 1.1));
+  const sun2 = sun.clone(); sun2.shadow = sun.shadow.clone(); sun2.shadow.mapSize.set(1024, 1024); sc2.add(sun2);
+  const cam2 = new THREE.PerspectiveCamera(30, 4 / 3, 0.1, 100);
+  const b2 = box.clone(true); b2.position.set(0, 0, 0); b2.rotation.set(0, -0.42, 0); sc2.add(b2);
+  const lid2 = b2.getObjectByName('lid');
+  const drops = items.map((it, i) => {
+    const m = it.mesh.clone(true); m.visible = true; m.scale.set(1, 1, 1);
+    const q = flatQ.clone(); if (it.mesh.userData.endZ) q.multiply(new THREE.Quaternion().setFromAxisAngle(zAxis, it.mesh.userData.endZ));
+    m.quaternion.copy(q); b2.add(m);
+    return { m, end: it.local.clone(), q, spin: new THREE.Euler((i % 2 ? 1 : -1) * 1.3, 0.8 * i, (i % 3 - 1) * 1.1), p: { v: 0 } };
+  });
+  const st = { lid: 0 };
+  const tq = new THREE.Quaternion(), te = new THREE.Quaternion();
+  function size() {
+    const w = cv.clientWidth, h = cv.clientHeight; if (!w || !h) return;
+    r2.setSize(w, h, false); cam2.aspect = w / h;
+    cam2.position.set(0, 6.6, 9.6).multiplyScalar((w < 420 ? 0.82 : 1) * Math.max(1, 1.25 / cam2.aspect));
+    cam2.lookAt(0, 0.95, -0.45); cam2.updateProjectionMatrix();
+  }
+  size(); addEventListener('resize', size);
+  function draw() {
+    lid2.rotation.x = LID_OPEN * (1 - st.lid);
+    drops.forEach(d => {
+      const v = d.p.v, e = gsap.parseEase('power2.in')(v);
+      d.m.visible = v > 0.001;
+      d.m.position.set(d.end.x, d.end.y + (1 - e) * 7.5, d.end.z);
+      te.setFromEuler(new THREE.Euler(d.spin.x * (1 - v), d.spin.y * (1 - v), d.spin.z * (1 - v)));
+      d.m.quaternion.copy(d.q).premultiply(te);
+      const land = v > 0.92 ? 1 - Math.sin((v - 0.92) / 0.08 * Math.PI) * 0.07 : 1;
+      d.m.scale.set(2 - land, land, 2 - land);
+    });
+    r2.render(sc2, cam2);
+  }
+  const tl = gsap.timeline({ repeat: -1, onUpdate: draw, defaults: { ease: 'none' } });
+  tl.set(st, { lid: 0 }).set(drops.map(d => d.p), { v: 0 }).to(cv, { opacity: 1, duration: 0.4 });
+  drops.forEach((d, i) => tl.to(d.p, { v: 1, duration: 0.75 }, 0.4 + i * 0.32));
+  const L = 0.4 + drops.length * 0.32 + 0.6;
+  tl.to(st, { lid: 1, duration: 0.8, ease: 'power2.in' }, L)
+    .to(b2.position, { y: -0.04, duration: 0.06 }, L + 0.78).to(b2.position, { y: 0, duration: 0.25, ease: 'power2.out' })
+    .to({}, { duration: 1.4 })
+    .to(cv, { opacity: 0, duration: 0.4 });
+  draw();
+  if (reduce) { tl.progress(0.85).pause(); draw(); return; }
+  tl.pause();
+  new IntersectionObserver(([e]) => e.isIntersecting ? tl.play() : tl.pause()).observe(cv);
+}
+
+function setupScroll() {
+  const tl = gsap.timeline({ defaults: { ease: 'none' } });
+  tl.to('.headline .ln > span', { yPercent: -110, duration: 0.6, stagger: 0.06, ease: 'power2.in' }, 0.25)
+    .to('.scribble', { autoAlpha: 0, duration: 0.3 }, 0.25)
+    .to('#heroUi', { autoAlpha: 0, y: -10, duration: 0.4 }, 0)
+    .to(S, { cam1: 1, duration: 1.3, ease: 'power2.inOut' }, 0.15);
+  items.forEach((it, i) => tl.to(it.p, { v: 1, duration: 1.1, ease: 'none' }, 0.6 + i * 0.36));
+  const L = 0.6 + items.length * 0.36 + 0.9;
+  tl.to(S, { lid: 1, duration: 1.0, ease: 'power2.in' }, L)
+    .to(S, { shake: 1, duration: 0.05 }, L + 0.98).to(S, { shake: 0, duration: 0.3, ease: 'power2.out' })
+    .call(() => { slabel.textContent = 'Packing'; }, null, L - 0.01)
+    .call(() => { slabel.textContent = 'Ready to gift'; }, null, L + 1)
+    .to(S, { cam2: 1, duration: 1.5, ease: 'power2.inOut' }, L + 0.85)
+    .fromTo('#boxName', { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out' }, L + 1.7)
+    .to({}, { duration: 0.7 });
+  ScrollTrigger.create({ animation: tl, trigger: hero, start: 'top top', end: () => '+=' + Math.round(innerHeight * (innerWidth < 900 ? 3.2 : 4)), pin: true, scrub: 1, invalidateOnRefresh: true });
+
+  ScrollTrigger.create({ trigger: '#how', start: 'top 80px', endTrigger: 'html', end: 'bottom bottom', toggleClass: { targets: '.nav', className: 'solid' } });
+  const rail = document.getElementById('rail');
+  const rthumb = document.getElementById('rthumb'), rcount = document.getElementById('rcount'), nCards = rail.children.length;
+  const railPos = pr => {
+    const vis = Math.min(1, innerWidth / Math.max(1, rail.scrollWidth));
+    rthumb.style.width = (vis * 100) + '%';
+    rthumb.style.transform = `translateX(${(pr * (1 - vis) / vis) * 100}%)`;
+    rcount.textContent = String(Math.min(nCards, 1 + Math.round(pr * (nCards - 1)))).padStart(2, '0') + ' / ' + String(nCards).padStart(2, '0');
+  };
+  railPos(0);
+  rail.addEventListener('scroll', () => { const m = rail.scrollWidth - rail.clientWidth; railPos(m > 0 ? rail.scrollLeft / m : 0); }, { passive: true });
+  ScrollTrigger.matchMedia({
+    '(min-width: 901px)': () => {
+      const dist = () => Math.max(0, rail.scrollWidth - innerWidth);
+      gsap.to(rail, { x: () => -dist(), ease: 'none', scrollTrigger: { trigger: '#boxes', start: 'top top', end: () => '+=' + dist(), pin: '.coll-pin', scrub: 0.8, invalidateOnRefresh: true, onUpdate: st => railPos(st.progress) } });
+    }
+  });
+  const go = (sel, then) => {
+    const el = document.querySelector(sel); if (!el) return;
+    const st = ScrollTrigger.getAll().find(t => t.trigger === el && t.pin);
+    const y = st ? st.start : el.getBoundingClientRect().top + scrollY;
+    const done = () => then && setTimeout(then, 150);
+    if (window.__lenis) window.__lenis.scrollTo(y, { duration: 1.4, onComplete: done });
+    else { scrollTo({ top: y, behavior: reduce ? 'auto' : 'smooth' }); setTimeout(done, reduce ? 0 : 900); }
+  };
+  document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+    const h = a.getAttribute('href'); if (h.length < 2) return; e.preventDefault();
+    const box = a.dataset.open;
+    go(h, box != null ? () => window.__openBox && window.__openBox(+box) : null);
+  }));
+  gsap.utils.toArray('.sec-head h2, .step').forEach(el => {
+    gsap.from(el, { y: 60, duration: 1.1, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 88%' } });
+  });
+  try { ScrollTrigger.clearScrollMemory('manual'); } catch (e) {}
+  window.scrollTo(0, 0);
+  if (window.Lenis && !reduce) {
+    try {
+      const lenis = new Lenis({ lerp: 0.08 }); window.__lenis = lenis;
+      lenis.on('scroll', ScrollTrigger.update);
+      gsap.ticker.add(time => lenis.raf(time * 1000)); gsap.ticker.lagSmoothing(0);
+      lenis.scrollTo(0, { immediate: true, force: true });
+
+    } catch (e) {}
+  }
+}
+</script>
+<script>
+(() => {
+  const el = document.getElementById('pick'); if (!el || !window.gsap) return;
+  const track = el.querySelector('.ptrack'), cards = [...el.querySelectorAll('.pc')], tgt = el.querySelector('[data-target]'), btn = tgt.querySelector('.pb'), cur = el.querySelector('.pcur');
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  // centre of card i in px of the stage after the track has slid by `shift`
+  const shiftTo = i => { const c = cards[i]; return el.clientWidth / 2 - (c.offsetLeft + c.offsetWidth / 2); };
+  const startX = () => Math.min(16, shiftTo(0));   // first card starts at the left edge, next one peeking
+  const btnPos = () => { const r = btn.getBoundingClientRect(), p = el.getBoundingClientRect(), tx = gsap.getProperty(track, 'x'); return { x: r.left - p.left + r.width * 0.55, y: r.top - p.top + r.height * 0.55 }; };
+  const tl = gsap.timeline({ repeat: -1, repeatDelay: 0.3, defaults: { ease: 'power2.inOut' } });
+  tl.set(track, { x: startX })
+    .set(cards, { borderColor: 'transparent', scale: 1 }).set(btn, { background: '#E4EDCF', color: '#2C4A24', borderColor: 'rgba(44,74,36,.18)' }).call(() => btn.textContent = 'Select this')
+    .to({}, { duration: 0.9 })
+    .to(track, { x: () => shiftTo(1), duration: 0.8 })
+    .to({}, { duration: 0.6 })
+    .to(track, { x: () => shiftTo(2), duration: 0.8 })
+    .fromTo(cur, { opacity: 0, left: '92%', top: '96%' }, { opacity: 1, left: () => btnPos().x + 'px', top: () => btnPos().y + 'px', duration: 0.9, ease: 'power3.out' }, '-=0.2')
+    .to(btn, { scale: 0.9, duration: 0.1 }).to(cur, { scale: 0.85, duration: 0.1 }, '<')
+    .to(btn, { scale: 1, background: '#9DC73C', color: '#16260F', borderColor: '#9DC73C', duration: 0.25 }).to(cur, { scale: 1, duration: 0.2 }, '<')
+    .call(() => btn.textContent = 'Selected ✓', null, '<')
+    .to(tgt, { borderColor: '#9DC73C', scale: 1.05, duration: 0.35, ease: 'back.out(2.5)' }, '<')
+    .to(cur, { opacity: 0, left: '90%', top: '100%', duration: 0.6 }, '+=0.5')
+    .to({}, { duration: 0.8 })
+    .to(track, { opacity: 0, duration: 0.3 })
+    .set(tgt, { borderColor: 'transparent', scale: 1 }).set(track, { x: startX })
+    .to(track, { opacity: 1, duration: 0.3 });
+  tl.pause();
+  new IntersectionObserver(([e]) => e.isIntersecting ? tl.play() : tl.pause()).observe(el);
+})();
+</script>
+<script>
+(() => {
+  const el = document.getElementById('notif'); if (!el || !window.gsap) return;
+  const [wa, ml] = el.querySelectorAll('.nn');
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { gsap.set([wa, ml], { opacity: 1 }); return; }
+  const tl = gsap.timeline({ repeat: -1, repeatDelay: 0.4 });
+  const dg = el.querySelector('.ding'), bell = dg.querySelector('svg'), rings = dg.querySelectorAll('.ring');
+  // "ding": a bell badge pops beside the phone with sound rings, the alert drops in on screen
+  const ding = (n, at) => {
+    tl.fromTo(dg, { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.35, ease: 'back.out(2.6)' }, at)
+      .fromTo(bell, { rotation: -26 }, { rotation: 0, duration: 0.8, ease: 'elastic.out(1.6,0.22)' }, '<')
+      .fromTo(rings, { opacity: 0.9, scale: 1 }, { opacity: 0, scale: 2.2, duration: 0.9, stagger: 0.18, ease: 'power2.out' }, '<0.05')
+      .fromTo(n, { opacity: 0, y: -24, scale: 0.88 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'back.out(2.2)' }, '<0.1')
+      .to(dg, { opacity: 0, scale: 0.6, duration: 0.3, ease: 'power2.in' }, '+=0.5');
+  };
+  tl.set([wa, ml], { opacity: 0 }).to({}, { duration: 0.6 });
+  ding(wa, 0.6);
+  ding(ml, 2.6);
+  tl.to({}, { duration: 2.2 })
+    .to([wa, ml], { opacity: 0, y: -16, duration: 0.4, stagger: 0.08 });
+  tl.pause();
+  new IntersectionObserver(([e]) => e.isIntersecting ? tl.play() : tl.pause()).observe(el);
+})();
+</script>
+</body></html>
