@@ -455,7 +455,7 @@ gmp-place-autocomplete{width:100%;color-scheme:light}
       <ul class="mdl-rules" id="mdlRules"></ul>
       <div class="mdl-acts" id="mdlActs">
         <button class="mdl-go" id="mdlBuy" type="button">Get this now</button>
-        <a class="mdl-alt" id="mdlChat" href="#" target="_blank" rel="noopener">Chat with a human</a>
+        <a class="mdl-alt" id="mdlChat" href="https://wa.me/2348089440743" target="_blank" rel="noopener">Chat with a human</a>
       </div>
     </div>
     <!-- checkout -->
@@ -504,7 +504,7 @@ gmp-place-autocomplete{width:100%;color-scheme:light}
       <h3>Thank you! Your gift is booked.</h3>
       <p id="coDoneText"></p>
       <div class="mdl-sum" id="coDoneSum"></div>
-      <div class="mdl-acts"><button class="mdl-go" type="button" data-close>Done</button><a class="mdl-alt" id="coDoneChat" href="#" target="_blank" rel="noopener">Chat with a human</a></div>
+      <div class="mdl-acts"><button class="mdl-go" type="button" data-close>Done</button><a class="mdl-alt" id="coDoneChat" href="https://wa.me/2348089440743" target="_blank" rel="noopener">Chat with a human</a></div>
     </div>
   </div>
 </div>
@@ -578,8 +578,8 @@ document.getElementById('rail').innerHTML = COLLECTION.map((b, i) => `
   const show = v => { const c = m.querySelector('.mdl-card'); Object.entries(views).forEach(([k, el]) => { el.hidden = k !== v; el.scrollTop = 0; }); c.scrollTop = 0; c.dataset.view = v; };
   const wa = msg => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
   const PREVIEW = !/^https?:$/.test(location.protocol) || /claude|anthropic|usercontent|localhost|127\.0\.0\.1/.test(location.hostname);
-  // phones: open WhatsApp in the same tab (new tabs to wa.me get blocked by some in-app browsers)
-  if (matchMedia('(hover: none)').matches) ['mdlChat', 'coDoneChat'].forEach(id => $(id).removeAttribute('target'));
+  // WhatsApp links always open outside the page: inside a frame or preview, wa.me can't load in place
+  ['mdlChat', 'coDoneChat'].forEach(id => { $(id).target = '_blank'; $(id).rel = 'noopener'; });
   let last = null, box = null, quote = null, mapsReady = null, place = null;
 
   /* ---------------- info view ---------------- */
@@ -1375,7 +1375,9 @@ function setupScroll() {
     else { scrollTo({ top: y, behavior: reduce ? 'auto' : 'smooth' }); setTimeout(done, reduce ? 0 : 900); }
   };
   document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
-    const h = a.getAttribute('href'); if (h.length < 2) return; e.preventDefault();
+    const h = a.getAttribute('href') || '';
+    if (h.length < 2 || h[0] !== '#') return;   // only in-page links; leave WhatsApp/mailto/etc. alone
+    e.preventDefault();
     const box = a.dataset.open;
     go(h, box != null ? () => window.__openBox && window.__openBox(+box) : null);
   }));
