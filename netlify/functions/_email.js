@@ -25,11 +25,11 @@ ${body}
 <tr><td style="padding:18px 28px;background:#F4F1E8;color:#6b7563;font-size:12px">GiftGrid · Lagos · giftgrid.com.ng · WhatsApp +234 808 944 0743 · Questions? Just reply to this email.</td></tr>
 </table></td></tr></table></body></html>`;
 
-function details(o, paid) {
+function details(o, paid, team) {
   return `<table role="presentation" width="100%" style="border-collapse:collapse;font-size:14px;margin:8px 0 18px">
 ${row('Order', o.order_id)}${row('Box', o.box_name)}${row('Recipient', `${o.recipient_name} · ${o.recipient_phone}`)}
 ${row('Address', [o.address, o.address_extra].filter(Boolean).join(', '))}${row('Delivery', `${o.date}, ${o.slot}`)}
-${row('Backup contact', o.backup_contact)}${row('Card message', o.card_message)}${row('Instructions', o.instructions)}
+${row('Backup contact', o.backup_contact)}${team ? row('Rider', o.chowdeck) : ''}${row('Card message', o.card_message)}${row('Instructions', o.instructions)}
 ${row('Box price', naira(o.box_price))}${row('Delivery fee', naira(o.delivery_fee) + (o.delivery_label ? ` (${o.delivery_label})` : ''))}
 <tr><td style="padding:10px 0 0;font-weight:bold;color:#16260F">Total paid</td><td style="padding:10px 0 0;font-weight:bold;color:#16260F">${naira(paid)}</td></tr></table>`;
 }
@@ -48,7 +48,7 @@ async function teamAlert(o, paid) {
     to: C.ORDER_NOTIFY_EMAIL,
     subject: `New order ${o.order_id}: ${o.box_name} for ${o.date}`,
     replyTo: o.buyer_email,
-    html: shell('New paid order', `<p style="color:#3d4736;font-size:15px;margin:0 0 6px">From ${esc(o.buyer_name)} · ${esc(o.buyer_phone)} · ${esc(o.buyer_email)}</p>${details(o, paid)}${map}`),
+    html: shell('New paid order', `<p style="color:#3d4736;font-size:15px;margin:0 0 6px">From ${esc(o.buyer_name)} · ${esc(o.buyer_phone)} · ${esc(o.buyer_email)}</p>${details(o, paid, true)}${map}`),
   });
 }
 module.exports = { customerReceipt, teamAlert };

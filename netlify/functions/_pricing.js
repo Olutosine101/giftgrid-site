@@ -1,5 +1,5 @@
-// Delivery pricing. A live Chowdeck Relay quote is used when CHOWDECK_API_KEY is set;
-// otherwise a distance estimate from the hub (or the area fee) is used.
+// Delivery pricing. With CHOWDECK_API_KEY set, every quote is a live Chowdeck Relay price;
+// otherwise the fixed area list (_areas.json) or a distance estimate is used.
 const num = (v, d) => (v === undefined || v === '' ? d : Number(v));
 
 const C = require('./_config');
@@ -40,41 +40,28 @@ function estimate(lat, lng, HUB) {
   return { ok: true, km, fee, label: `${Math.round(km)} km`, provider: 'estimate' };
 }
 
-// Chowdeck Relay: fill in once you have API access (docs: chowdeck.readme.io/reference/getting-started-with-relay).
-// Return { ok, fee, label, ref } or null to fall back to the estimate.
-async function chowdeckQuote({ lat, lng, address }, HUB) {
-  const key = process.env.CHOWDECK_API_KEY;
-  const url = process.env.CHOWDECK_QUOTE_URL; // the fee/quote endpoint from your Relay docs
-  if (!key || !url) return null;
+const chowdeck = require('./_chowdeck');
+
+async function live(to, address, from) {
+  if (!chowdeck.enabled()) return null;
   try {
-    const r = await fetch(url, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        // TODO: rename fields to match the Relay quote endpoint
-        pickup: { latitude: HUB.lat, longitude: HUB.lng, address: C.HUB_ADDRESS },
-        dropoff: { latitude: lat, longitude: lng, address },
-      }),
-    });
-    if (!r.ok) return null;
-    const j = await r.json();
-    // TODO: map the response fields (amount may be in kobo)
-    const fee = Number(j?.data?.fee ?? j?.data?.amount ?? j?.fee);
-    if (!fee) return null;
-    return { ok: true, fee: Math.ceil(fee), label: 'Chowdeck', ref: j?.data?.id || j?.data?.reference || null, provider: 'chowdeck' };
-  } catch (e) {
-    return null;
-  }
+    const q = await chowdeck.fee({ from, to, toAddress: address });
+    return { ok: true, fee: q.fee, label: 'Chowdeck', ref: q.feeId, provider: 'chowdeck', lat: to.lat, lng: to.lng };
+  } catch (e) { console.error('chowdeck fee failed:', e.message); return null; }
 }
 
 async function quote({ lat, lng, address, zone }) {
   if (typeof lat === 'number' && typeof lng === 'number') {
     const h = await hub();
     if (!inLagos(lat, lng)) return estimate(lat, lng, h);
-    return (await chowdeckQuote({ lat, lng, address }, h)) || estimate(lat, lng, h);
+    return (await live({ lat, lng }, address, h)) || estimate(lat, lng, h);
   }
   const area = zone && AREAS.find(a => a.id === zone);
-  if (area) return { ok: true, fee: area.fee, label: area.name, provider: 'area' };
+  if (area) {
+    // live Chowdeck price to the centre of the chosen area; the area list is the fallback
+    const l = await live({ lat: area.lat, lng: area.lng }, `${address || ''}, ${area.name}, Lagos`, await hub());
+    return l ? { ...l, label: area.name } : { ok: true, fee: area.fee, label: area.name, provider: 'area' };
+  }
   if (zone && ZONES[zone]) return { ok: true, fee: ZONES[zone].fee, label: ZONES[zone].name, provider: 'zone' };
   return { ok: false, message: 'Add the delivery address so we can work out the delivery fee.' };
 }

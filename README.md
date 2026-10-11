@@ -54,7 +54,9 @@ Optional settings:
 | `GOOGLE_MAPS_API_KEY` | Adds Google address suggestions as customers type (replaces the area list). |
 | `HUB_LAT`, `HUB_LNG` | The exact map pin of the dispatch address, if the automatic lookup puts it in the wrong place. |
 | `DELIVERY_BASE`, `DELIVERY_BASE_KM`, `DELIVERY_PER_KM`, `DELIVERY_MAX`, `DELIVERY_MAX_KM` | Your delivery pricing. The defaults are ₦2,000 for the first 5 km, then ₦250 per km, capped at ₦12,000, delivering up to 45 km. |
-| `CHOWDECK_API_KEY`, `CHOWDECK_QUOTE_URL` | Live Chowdeck delivery prices, once Chowdeck gives you API access. |
+| `CHOWDECK_API_KEY` | Live Chowdeck Relay delivery prices (test or live key from https://dashboard.chowdeck.com/settings/developers). Without it, the fixed area prices are used. |
+| `DELIVERY_MARKUP` | Naira added on top of every Chowdeck price (e.g. `500`). Default 0. |
+| `CHOWDECK_AUTO_BOOK` | `true` = book the Chowdeck rider automatically for the chosen date and time window as soon as an order is paid. Needs a funded Chowdeck wallet and scheduled deliveries enabled on your Chowdeck account. |
 
 ## 4. Connect giftgrid.com.ng
 

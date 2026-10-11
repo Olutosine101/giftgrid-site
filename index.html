@@ -631,11 +631,11 @@ document.getElementById('rail').innerHTML = COLLECTION.map((b, i) => `
     show('co');
     setTimeout(() => $('co_name').focus(), 60);
   }
-  function renderSum() {
+  function renderSum(pending) {
     const price = num(box.price);
     const fee = quote ? quote.fee : null;
     $('coSum').innerHTML = `<div class="r"><span>${esc(box.name)}</span><span>${naira(price)}</span></div>`
-      + `<div class="r${fee == null ? ' muted' : ''}"><span>Delivery${quote && quote.label ? ' · ' + esc(quote.label) : ''}</span><span>${fee == null ? 'Add the address' : naira(fee)}</span></div>`
+      + `<div class="r${fee == null ? ' muted' : ''}"><span>Delivery${quote && quote.label ? ' · ' + esc(quote.label) : ''}</span><span>${fee == null ? (pending || 'Choose your area') : naira(fee)}</span></div>`
       + `<div class="r tot"><span>Total</span><span>${fee == null ? naira(price) + ' + delivery' : naira(price + fee)}</span></div>`;
     $('coPay').textContent = fee == null ? 'Pay' : 'Pay ' + naira(price + fee);
   }
@@ -666,7 +666,18 @@ document.getElementById('rail').innerHTML = COLLECTION.map((b, i) => `
   }
   function useZones() {
     $('coZoneWrap').hidden = false;
-    $('co_zone').onchange = () => { const z = CHECKOUT.areas.find(z => z.id === $('co_zone').value); quote = z ? { fee: z.fee, label: z.name, provider: 'area', zone: z.id } : null; $('co_zone').setAttribute('aria-invalid', 'false'); err(''); renderSum(); };
+    $('co_zone').onchange = async () => {
+      const z = CHECKOUT.areas.find(z => z.id === $('co_zone').value);
+      $('co_zone').setAttribute('aria-invalid', 'false'); err('');
+      if (!z) { quote = null; return renderSum(); }
+      // live price from the server (Chowdeck when connected); the area list is the instant fallback
+      quote = null; renderSum('Calculating…');
+      const want = z.id; let live = null;
+      try { const r = await fetch(CHECKOUT.apiBase + '/quote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ zone: z.id }) }); if (r.ok) live = await r.json(); } catch (e) {}
+      if ($('co_zone').value !== want) return;   // user changed area meanwhile
+      quote = live && live.ok ? { fee: live.fee, label: z.name, provider: live.provider, zone: z.id, ref: live.ref } : { fee: z.fee, label: z.name, provider: 'area', zone: z.id };
+      renderSum();
+    };
   }
   /* address search: real Google suggestions via /api/places (key stays on the server) */
   let acProv = 'Google', addrBuilt = false, acMode = 'zones', acSession = '', acTimer = 0, acItems = [], acSel = -1, acSeq = 0;

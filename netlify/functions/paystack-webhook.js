@@ -3,6 +3,8 @@
 const crypto = require('crypto');
 const catalog = require('./_catalog');
 const { customerReceipt, teamAlert } = require('./_email');
+const chowdeck = require('./_chowdeck');
+const { hub } = require('./_pricing');
 
 exports.handler = async event => {
   const sig = event.headers['x-paystack-signature'];
@@ -21,7 +23,11 @@ exports.handler = async event => {
   const box = catalog[o.box_id];
   if (!box || paid < box.price + Number(o.delivery_fee || 0)) { console.error('Amount mismatch', o.order_id, paid); return { statusCode: 200, body: 'flagged' }; }
 
-  // TODO (optional): book the Chowdeck Relay delivery here using o.quote_ref, and save the order to a sheet/DB.
+  // Optional: book the Chowdeck rider automatically (set CHOWDECK_AUTO_BOOK=true in Netlify)
+  if (process.env.CHOWDECK_AUTO_BOOK === 'true' && chowdeck.enabled() && o.lat != null) {
+    try { const d = await chowdeck.book(o, await hub()); o.chowdeck = `Booked on Chowdeck (ref ${d.reference}, status ${d.status})`; }
+    catch (e) { console.error('chowdeck booking failed:', e.message); o.chowdeck = `NOT booked on Chowdeck: ${e.message}. Please book it manually.`; }
+  }
   await Promise.all([customerReceipt(o, paid), teamAlert(o, paid)]);
   return { statusCode: 200, body: 'ok' };
 };
