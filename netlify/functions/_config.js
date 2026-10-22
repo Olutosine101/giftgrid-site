@@ -3,6 +3,7 @@
 const env = (k, d) => (process.env[k] === undefined || process.env[k] === '' ? d : process.env[k]);
 module.exports = {
   SITE_URL: env('SITE_URL', 'https://giftgrid.com.ng'),
+  REVIEW_URL: env('REVIEW_URL', 'https://g.page/r/CftXcnmCtiYJEBM/review'),   // Google review link
   FROM_EMAIL: env('FROM_EMAIL', 'GiftGrid <hello@giftgrid.com.ng>'),
   REPLY_TO: env('REPLY_TO', 'hello@giftgrid.com.ng'),
   ORDER_NOTIFY_EMAIL: env('ORDER_NOTIFY_EMAIL', 'order@giftgrid.com.ng'),

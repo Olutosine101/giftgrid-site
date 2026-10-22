@@ -39,16 +39,19 @@ async function customerReceipt(o, paid) {
     to: o.buyer_email,
     subject: `Your GiftGrid order ${o.order_id} is confirmed`,
     replyTo: C.REPLY_TO,
-    html: shell('Thank you, your gift is booked.', `<p style="color:#3d4736;font-size:15px;line-height:1.5;margin:0 0 6px">Hi ${esc(o.buyer_name.split(' ')[0])}, we have received your payment. We will pack your box by hand and you will get a message when it leaves.</p>${details(o, paid)}`),
+    html: shell('Thank you, your gift is booked.', `<p style="color:#3d4736;font-size:15px;line-height:1.5;margin:0 0 6px">Hi ${esc(o.buyer_name.split(' ')[0])}, we have received your payment. We will pack your box by hand and you will get a message when it leaves.</p>${details(o, paid)}<p style="color:#3d4736;font-size:14px;line-height:1.5;margin:18px 0 0">Once it arrives, a quick Google review helps a small Lagos business a lot. <a href="${C.REVIEW_URL}" style="color:#2C4A24;font-weight:600">Leave a review</a></p>`),
   });
 }
 async function teamAlert(o, paid) {
+  const intl = p => { const d = String(p || '').replace(/\D/g, ''); return d.startsWith('234') ? d : d.startsWith('0') ? '234' + d.slice(1) : d; };
+  const ask = `Hi ${o.buyer_name.split(' ')[0]}, your GiftGrid ${o.box_name.replace(/^The /, '')} has been delivered. Thank you for choosing us! If you have a minute, a quick Google review would mean a lot: ${C.REVIEW_URL}`;
+  const review = `<p><a href="https://wa.me/${intl(o.buyer_phone)}?text=${encodeURIComponent(ask)}">After delivery: send ${esc(o.buyer_name.split(' ')[0])} the review request on WhatsApp</a></p>`;
   const map = o.lat ? `<p><a href="https://www.google.com/maps?q=${o.lat},${o.lng}">Open the drop-off in Google Maps</a></p>` : '';
   await send({
     to: C.ORDER_NOTIFY_EMAIL,
     subject: `New order ${o.order_id}: ${o.box_name} for ${o.date}`,
     replyTo: o.buyer_email,
-    html: shell('New paid order', `<p style="color:#3d4736;font-size:15px;margin:0 0 6px">From ${esc(o.buyer_name)} · ${esc(o.buyer_phone)} · ${esc(o.buyer_email)}</p>${details(o, paid, true)}${map}`),
+    html: shell('New paid order', `<p style="color:#3d4736;font-size:15px;margin:0 0 6px">From ${esc(o.buyer_name)} · ${esc(o.buyer_phone)} · ${esc(o.buyer_email)}</p>${details(o, paid, true)}${map}${review}`),
   });
 }
 module.exports = { customerReceipt, teamAlert };
