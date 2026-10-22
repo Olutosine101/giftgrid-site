@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const catalog = require('./_catalog');
 const { customerReceipt, teamAlert } = require('./_email');
 const chowdeck = require('./_chowdeck');
+const meta = require('./_meta');
 const { hub } = require('./_pricing');
 
 exports.handler = async event => {
@@ -28,6 +29,9 @@ exports.handler = async event => {
     try { const d = await chowdeck.book(o, await hub()); o.chowdeck = `Booked on Chowdeck (ref ${d.reference}, status ${d.status})`; }
     catch (e) { console.error('chowdeck booking failed:', e.message); o.chowdeck = `NOT booked on Chowdeck: ${e.message}. Please book it manually.`; }
   }
-  await Promise.all([customerReceipt(o, paid), teamAlert(o, paid)]);
+  await Promise.all([
+    customerReceipt(o, paid), teamAlert(o, paid),
+    meta.purchase(o, paid).catch(e => console.error('meta capi failed:', e.message)),
+  ]);
   return { statusCode: 200, body: 'ok' };
 };

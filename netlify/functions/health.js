@@ -21,6 +21,7 @@ exports.handler = async () => {
     delivery_fees: delivery,
     chowdeck_key_hint: k ? `${k.slice(0, 6)}… (${k.length} chars${/^bearer /i.test(k) ? ', remove the word Bearer' : ''}${/\s/.test(k.trim()) || k !== k.trim() ? ', has spaces' : ''})` : 'not set',
     hub: `${C.HUB_LAT}, ${C.HUB_LNG}`,
+    meta_capi: process.env.META_PIXEL_ID && process.env.META_CAPI_TOKEN ? 'on' : 'off (set META_PIXEL_ID + META_CAPI_TOKEN)',
     address_search: geo.provider() || 'area list',
     site_url: C.SITE_URL,
   });

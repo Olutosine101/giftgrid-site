@@ -29,7 +29,7 @@ function details(o, paid, team) {
   return `<table role="presentation" width="100%" style="border-collapse:collapse;font-size:14px;margin:8px 0 18px">
 ${row('Order', o.order_id)}${row('Box', o.box_name)}${row('Recipient', `${o.recipient_name} · ${o.recipient_phone}`)}
 ${row('Address', [o.address, o.address_extra].filter(Boolean).join(', '))}${row('Delivery', `${o.date}, ${o.slot}`)}
-${row('Backup contact', o.backup_contact)}${team ? row('Rider', o.chowdeck) : ''}${row('Card message', o.card_message)}${row('Instructions', o.instructions)}
+${row('Backup contact', o.backup_contact)}${team ? row('Rider', o.chowdeck) : ''}${row('Card message', o.card_message)}${row('Instructions', o.instructions)}${team ? row('Heard about us', [o.heard_from, o.utm].filter(Boolean).join(' · ')) : ''}
 ${row('Box price', naira(o.box_price))}${row('Delivery fee', naira(o.delivery_fee) + (o.delivery_label ? ` (${o.delivery_label})` : ''))}
 <tr><td style="padding:10px 0 0;font-weight:bold;color:#16260F">Total paid</td><td style="padding:10px 0 0;font-weight:bold;color:#16260F">${naira(paid)}</td></tr></table>`;
 }

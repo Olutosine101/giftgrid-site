@@ -36,6 +36,11 @@ exports.handler = async event => {
     address: clean(b.address), address_extra: clean(b.address_extra), lat: lat ?? q.lat ?? null, lng: lng ?? q.lng ?? null, zone: clean(b.zone, 60),
     date: clean(b.date, 10), slot: clean(b.slot, 40), backup_contact: clean(b.backup_contact, 20),
     card_message: clean(b.card_message, 280), instructions: clean(b.instructions, 280),
+    heard_from: clean(b.heard_from, 40), utm: clean(b.utm, 120),
+    // for Meta Conversions API matching (see _meta.js); never shown to anyone
+    fbp: clean(b.fbp, 120), fbc: clean(b.fbc, 200),
+    ip: clean((event.headers['x-nf-client-connection-ip'] || event.headers['x-forwarded-for'] || '').split(',')[0], 64),
+    ua: clean(event.headers['user-agent'], 300),
   };
 
   try {
@@ -51,6 +56,7 @@ exports.handler = async event => {
             { display_name: 'Recipient', variable_name: 'recipient', value: `${order.recipient_name} (${order.recipient_phone})` },
             { display_name: 'Delivery', variable_name: 'delivery', value: `${order.date} ${order.slot}` },
             { display_name: 'Address', variable_name: 'address', value: order.address },
+            { display_name: 'Heard about us', variable_name: 'heard_from', value: [order.heard_from, order.utm].filter(Boolean).join(' · ') || 'Not given' },
           ],
         },
       }),

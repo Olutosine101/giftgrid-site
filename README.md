@@ -100,3 +100,29 @@ When everything works, change `PAYSTACK_SECRET_KEY` in Netlify to your live key,
 4. After payment, Paystack calls `/api/paystack-webhook`. It checks the payment, then sends the customer's receipt and your team's order alert. The alert includes a Google Maps link to the delivery address.
 
 Box prices are in `netlify/functions/_catalog.js`. Customers are always charged these prices, so update this file whenever a price changes.
+
+
+## Festive SEO + ads update (October 2026)
+
+New pages (all built by `build_pages.py` from one content file): 10 box pages under `/boxes/`, `/christmas-hampers/`, `/corporate-gifts/` (with a quote form), `/breakfast-boxes/`, `/fruit-baskets/`, `/send-gifts-to-lagos/`, `/delivery/`, `/faq/`, `/blog/` with 3 posts, plus `sitemap.xml`, `robots.txt`, share images and icons.
+
+### Turn on tracking (before Meta ads go live)
+
+1. **Google Analytics 4:** create a property at https://analytics.google.com, add a Web data stream for giftgrid.com.ng, copy the Measurement ID (`G-…`).
+2. **Meta Pixel:** create a dataset/pixel in https://business.facebook.com/events_manager, copy the Pixel ID.
+3. Paste both IDs at the top of `assets/track.js` and upload that file to GitHub.
+4. **Meta Conversions API** (server-side purchases, more accurate ads): in Events Manager → your pixel → Settings → Conversions API → Generate access token. Add these in Netlify → Environment variables:
+   - `META_PIXEL_ID` = the Pixel ID
+   - `META_CAPI_TOKEN` = the access token
+   - `META_TEST_EVENT_CODE` (optional, only while testing in Events Manager → Test events; remove after)
+5. Check https://giftgrid.com.ng/api/health → `meta_capi: on`.
+
+Events sent: ViewContent (box opened), InitiateCheckout (Get this now), AddPaymentInfo (Pay), Purchase (paid, browser + server, de-duplicated by order id), Contact (any WhatsApp click), Lead (corporate quote form).
+
+### Corporate quote form
+
+The form uses Netlify Forms. In Netlify → your site → **Forms**, click **Enable form detection**, redeploy, then add an email notification to order@giftgrid.com.ng under **Form notifications**.
+
+### Changing deadlines or copy
+
+Christmas deadlines are set once at the top of `build_pages.py` (`CORP_DEADLINE`, `XMAS_DEADLINE`, `XMAS_LAST_DAY`). Ask Claude to change them and rebuild.
