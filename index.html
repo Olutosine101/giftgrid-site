@@ -191,6 +191,9 @@ a{color:inherit}
 .bx h3{font-family:var(--display);font-weight:500;font-size:24px;line-height:1.05;letter-spacing:-.02em;margin:0 0 6px}
 .bx p{margin:0 0 10px;color:var(--mist);font-size:14px;line-height:1.45}
 .bx .price{font-weight:500;color:var(--lime);font-variant-numeric:tabular-nums}
+/* every card the same height, price pinned to the bottom so all prices line up */
+.bx>div:last-child{flex:1;display:flex;flex-direction:column}
+.bx .price{margin-top:auto}
 .bx{cursor:pointer}
 .bx:focus-visible{outline:2px solid var(--yellow);outline-offset:3px}
 .bx-custom{background:transparent;border:1.5px dashed rgba(157,199,60,.55)}
