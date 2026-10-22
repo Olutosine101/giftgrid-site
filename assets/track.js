@@ -3,7 +3,7 @@
    - GA4 Measurement ID:  https://analytics.google.com  -> Admin -> Data streams -> your web stream  (looks like G-XXXXXXXXXX)
    - Meta Pixel ID:       https://business.facebook.com/events_manager  -> your dataset/pixel  (a 15-16 digit number)
    Leave an ID empty to switch that tool off. */
-window.GG_ANALYTICS = { ga4: '', metaPixel: '' };
+window.GG_ANALYTICS = { ga4: 'G-0399B8N0YM', metaPixel: '' };
 
 (function () {
   var c = window.GG_ANALYTICS || {};

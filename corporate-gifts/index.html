@@ -61,7 +61,7 @@ f.addEventListener('submit',function(e){
   e.preventDefault();var d=new FormData(f);btn.disabled=true;btn.textContent='Sending…';msg.hidden=true;
   var wa=function(){var t='Hi GiftGrid, I would like a corporate quote.\nName: '+d.get('name')+'\nCompany: '+d.get('company')+'\nEmail: '+d.get('email')+'\nPhone: '+d.get('phone')+'\nBoxes: '+d.get('quantity')+'\nBudget per box: '+(d.get('budget')||'-')+'\nDate: '+(d.get('date')||'-')+'\nDelivery: '+d.get('delivery')+'\nNotes: '+(d.get('message')||'-');return 'https://wa.me/2348089440743?text='+encodeURIComponent(t);};
   fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(d).toString()})
-  .then(function(r){if(!r.ok)throw 0;window.ggTrack&&ggTrack.lead('corporate-quote');location.href='/thanks/';})
+  .then(function(r){if(!r.ok)throw 0;window.ggTrack&&ggTrack.lead('corporate-quote');setTimeout(function(){location.href='/thanks/'},400);})
   .catch(function(){btn.disabled=false;btn.textContent='Request my quote';msg.hidden=false;
     msg.innerHTML='Sorry, that didn’t send. <a href="'+wa()+'" target="_blank" rel="noopener">Send your request on WhatsApp</a> instead (we’ve filled in your details), or email <a href="mailto:hello@giftgrid.com.ng">hello@giftgrid.com.ng</a>.';});
 });})();</script></div></section>
