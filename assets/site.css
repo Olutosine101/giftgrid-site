@@ -32,9 +32,11 @@ a{color:inherit}
 .menu summary::-webkit-details-marker{display:none}
 .menu summary span{display:block;width:18px;height:1.5px;background:var(--cream);box-shadow:0 6px 0 var(--cream),0 -6px 0 var(--cream)}
 .menu nav{position:absolute;right:0;top:54px;background:var(--forest);border:1px solid var(--line);border-radius:16px;padding:10px;display:grid;min-width:230px;box-shadow:0 20px 40px rgba(0,0,0,.35)}
-.menu nav a{padding:12px 14px;text-decoration:none;border-radius:10px}
+.menu:not([open]) nav{display:none}
+.menu[open] summary{background:rgba(255,255,255,.08)}
+.menu nav a{display:block;padding:12px 14px;text-decoration:none;border-radius:10px;color:var(--cream)}
 .menu nav a:hover{background:rgba(255,255,255,.06)}
-@media (max-width:860px){.links a:not(.pill){display:none}.menu{display:block}.links{gap:10px}.links .pill{padding:10px 16px;font-size:14px}}
+@media (max-width:860px){.links>a:not(.pill){display:none}.menu{display:block}.links{gap:10px}.links .pill{padding:10px 16px;font-size:14px}}
 
 /* breadcrumbs + hero */
 .crumbs{font-size:13px;color:var(--mist);padding-top:28px}
