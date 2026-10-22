@@ -2,6 +2,11 @@
   publish = "."
   functions = "netlify/functions"
 
+[build.environment]
+  # The Meta Pixel ID is a public, client-side identifier (it ships to every
+  # browser via track.js), so it's safe to exclude from secrets scanning.
+  SECRETS_SCAN_OMIT_KEYS = "META_PIXEL_ID"
+
 [functions]
   node_bundler = "esbuild"
 
