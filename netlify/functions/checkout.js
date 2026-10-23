@@ -17,11 +17,11 @@ exports.handler = async event => {
     return json(400, { message: 'Please check the names and phone numbers.' });
   if (!clean(b.address)) return json(400, { message: 'Please add the delivery address.' });
 
-  // date rule: order by 9:00 a.m. (Lagos) the day before
+  // date rule: order by 12 noon (Lagos) the day before
   const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'Africa/Lagos' }));
-  const min = new Date(now); min.setDate(min.getDate() + (now.getHours() < 9 ? 1 : 2)); min.setHours(0, 0, 0, 0);
+  const min = new Date(now); min.setDate(min.getDate() + (now.getHours() < 12 ? 1 : 2)); min.setHours(0, 0, 0, 0);
   const day = new Date(String(b.date) + 'T00:00');
-  if (isNaN(day) || day < min) return json(400, { message: 'Please pick a later delivery date. Orders close at 9:00 a.m. the day before.' });
+  if (isNaN(day) || day < min) return json(400, { message: 'Please pick a later delivery date. Orders close at 12 noon the day before.' });
 
   const lat = typeof b.lat === 'number' ? b.lat : undefined, lng = typeof b.lng === 'number' ? b.lng : undefined;
   const q = await quote({ lat, lng, address: b.address, zone: b.zone });

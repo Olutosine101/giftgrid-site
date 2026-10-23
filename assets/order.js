@@ -44,8 +44,8 @@ const DELIVERY = {
   fee: null,                          // e.g. 3500 for a flat fee; null = confirmed on WhatsApp
   rules: [
     'Delivering across Lagos',
-    'Order by 9:00 a.m. the day before delivery',
-    'Breakfast boxes need 24 hours’ notice and arrive 7:30–11:00 a.m.',
+    'Order by 12 noon the day before delivery',
+    'Breakfast boxes arrive 7:30–11:00 a.m. on the day you choose',
     'Add a second contact or gate security number for the recipient',
   ],
 };
@@ -173,7 +173,7 @@ document.body.insertAdjacentHTML('beforeend', `<div class="mdl" id="mdl" role="d
   /* ---------------- checkout view ---------------- */
   const lagosNow = () => new Date(new Date().toLocaleString('en-US', { timeZone: 'Africa/Lagos' }));
   const ymd = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-  function minDate() { const n = lagosNow(); const d = new Date(n); d.setDate(d.getDate() + (n.getHours() < 9 ? 1 : 2)); return d; }
+  function minDate() { const n = lagosNow(); const d = new Date(n); d.setDate(d.getDate() + (n.getHours() < 12 ? 1 : 2)); return d; }
   function slotsFor(b) {
     return b.cat === 'Breakfast'
       ? ['7:30–8:30 a.m.', '8:30–9:30 a.m.', '9:30–11:00 a.m.']
