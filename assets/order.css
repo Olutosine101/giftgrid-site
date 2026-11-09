@@ -97,3 +97,74 @@
 .pk b{font-weight:500;font-size:14px;line-height:1.25}
 .pk-p{font-size:13px;color:#56604E}
 @media (max-width:520px){.pick-grid{grid-template-columns:1fr 1fr}}
+/* ---------- cart: add-to-cart buttons, steppers, cart button, cart view ---------- */
+.gg-add{display:flex;align-items:center}
+.gg-add:empty{display:none}
+.ga-add{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;border-radius:999px;border:0;background:var(--yellow);color:var(--ink);font:inherit;font-size:15px;font-weight:500;cursor:pointer;transition:transform .2s,background .2s;white-space:nowrap}
+.ga-add:hover{transform:scale(1.03)}
+.ga-add.ga-in{background:transparent;color:var(--yellow);box-shadow:inset 0 0 0 1.5px var(--yellow)}
+.ga-step{display:inline-flex;align-items:center;min-height:44px;border-radius:999px;background:var(--yellow);color:var(--ink);padding:3px}
+.ga-step button{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;border:0;background:transparent;color:inherit;font:inherit;font-size:22px;line-height:1;cursor:pointer;transition:background .2s}
+.ga-step button:hover:not([disabled]){background:rgba(22,38,15,.1)}
+.ga-step button[disabled]{opacity:.35;cursor:not-allowed}
+.ga-step output{min-width:34px;text-align:center;font-weight:600;font-size:16px;font-variant-numeric:tabular-nums}
+.gg-add button:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
+/* box cards (made by order.js from each card link) */
+.card.has-add{position:relative}
+.card .card-hit{display:flex;flex-direction:column;flex:1;text-decoration:none;color:inherit}
+.card .card-hit .txt{padding-bottom:12px}
+.gg-add-card{padding:0 20px 20px}
+.gg-add-card .ga-add,.gg-add-card .ga-step{width:100%;justify-content:space-between}
+.gg-add-card .ga-add{justify-content:center}
+/* homepage rail */
+.bx .gg-add{margin-top:14px}
+.bx .gg-add .ga-add,.bx .gg-add .ga-step{width:100%;justify-content:space-between}
+.bx .gg-add .ga-add{justify-content:center}
+/* box pages: add to cart leads, order now becomes the outline button */
+.gg-add-lg .ga-add,.gg-add-lg .ga-step{min-height:48px}
+.gg-add-lg .ga-add{padding:0 26px}
+.actions .gg-add + .pill:not(.ghost){background:transparent;color:var(--yellow)!important;box-shadow:inset 0 0 0 1.5px var(--yellow)}
+/* option chooser (box page and pop-up) */
+.variant{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px}
+.variant button{display:grid;gap:1px;text-align:left;font:inherit;font-size:14px;font-weight:500;padding:10px 16px;border-radius:14px;cursor:pointer;background:transparent;color:inherit;border:1.5px solid var(--line);transition:border-color .2s,background .2s}
+.variant button small{font-size:12px;font-weight:400;opacity:.7}
+.variant button[aria-checked="true"]{border-color:var(--lime);background:rgba(157,199,60,.14)}
+.mdl .variant{margin:0}
+.mdl .variant button{border-color:rgba(22,38,15,.2)}
+.mdl .variant button[aria-checked="true"]{border-color:var(--forest);background:rgba(157,199,60,.18)}
+/* inside the cream pop-up the steppers are forest green */
+.mdl .ga-add,.mdl .ga-step{background:var(--forest);color:var(--yellow)}
+.mdl .ga-step button:hover:not([disabled]){background:rgba(247,234,44,.14)}
+.gg-add-mdl .ga-add,.gg-add-mdl .ga-step{min-height:48px}
+#mdlActs #mdlBuy{background:transparent;color:var(--forest);box-shadow:inset 0 0 0 1.5px var(--forest);padding:0 20px;min-height:48px}
+#mdlActs:has(#mdlAdd:empty) #mdlBuy{background:var(--forest);color:var(--yellow);box-shadow:none}
+/* floating cart button */
+.gg-fab{position:fixed;right:max(16px,env(safe-area-inset-right,0px) + 12px);bottom:calc(env(safe-area-inset-bottom,0px) + 16px);z-index:80;display:inline-flex;align-items:center;gap:10px;min-height:54px;padding:0 20px 0 16px;border:0;border-radius:999px;background:var(--yellow);color:var(--ink);font:500 15px var(--body,system-ui);box-shadow:0 14px 34px rgba(0,0,0,.35);cursor:pointer;transition:transform .25s}
+.gg-fab:hover{transform:translateY(-2px)}
+.gg-fab[hidden]{display:none}
+.gg-fab-n{display:grid;place-items:center;min-width:24px;height:24px;padding:0 6px;border-radius:12px;background:var(--ink);color:var(--yellow);font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+.gg-fab-t{font-variant-numeric:tabular-nums}
+.gg-fab.bump{animation:ggBump .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes ggBump{40%{transform:scale(1.1)}}
+.mdl.open ~ .gg-fab,html:has(.mdl.open) .gg-fab{display:none}
+/* cart view */
+.mdl-card[data-view="cart"]{grid-template-columns:1fr!important}
+.mdl-card[data-view="cart"] .mdl-img{display:none}
+@media (min-width:901px){.mdl-card[data-view="cart"]{width:min(640px,100%)}}
+.cart-list{display:grid;gap:10px}
+.cl{display:grid;grid-template-columns:64px minmax(0,1fr) auto;grid-template-areas:"img t p" "img s s";align-items:center;gap:4px 14px;background:#fff;border:1px solid rgba(22,38,15,.1);border-radius:16px;padding:10px 14px 10px 10px}
+.cl-img{grid-area:img;display:grid;place-items:center;width:64px;height:64px;border-radius:12px;background:radial-gradient(circle at 50% 40%,#284720,#13240F);overflow:hidden}
+.cl-img img{width:88%;height:88%;object-fit:contain}
+.cl-t{grid-area:t;display:grid;gap:1px;min-width:0}
+.cl-t b{font-weight:500;font-size:15px;line-height:1.25}
+.cl-t small{font-size:12.5px;color:#6b7563}
+.cl-p{grid-area:p;font-weight:500;font-variant-numeric:tabular-nums}
+.cl .gg-add{grid-area:s}
+.gg-add-sm .ga-step{min-height:36px}
+.gg-add-sm .ga-step button{width:30px;height:30px;font-size:18px}
+.gg-add-sm .ga-step output{min-width:28px;font-size:14px}
+.cart-note{margin:0;font-size:13px;color:#6b7563}
+.cart-empty{margin:0;color:#56604E}
+@media (max-width:900px){#mdlActs{flex-wrap:wrap;row-gap:8px}#mdlActs .gg-add{flex:1}#mdlActs .gg-add .ga-add,#mdlActs .gg-add .ga-step{width:100%;justify-content:space-between}#mdlActs .gg-add .ga-add{justify-content:center}#mdlActs #mdlChat:not(.solo){flex:1 1 100%;min-height:36px;border:0;justify-content:center;text-decoration:underline;text-underline-offset:3px;font-size:14px}.gg-fab{min-height:52px}}
+.bx .gg-add-card{padding:0}
+button.mdl-alt{background:transparent;font:inherit;font-weight:500;cursor:pointer}

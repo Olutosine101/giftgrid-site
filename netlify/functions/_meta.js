@@ -19,7 +19,7 @@ async function purchase(o, paid) {
     data: [{
       event_name: 'Purchase', event_time: Math.floor(Date.now() / 1000), event_id: o.order_id,   // same id as the browser pixel, so Meta counts it once
       action_source: 'website', event_source_url: C.SITE_URL + '/', user_data,
-      custom_data: { currency: 'NGN', value: paid, content_ids: [o.box_id], content_type: 'product', order_id: o.order_id },
+      custom_data: { currency: 'NGN', value: paid, content_ids: Array.isArray(o.items) ? o.items.map(i => i.id) : [o.box_id], contents: Array.isArray(o.items) ? o.items.map(i => ({ id: i.id, quantity: i.qty, item_price: i.price })) : undefined, num_items: Array.isArray(o.items) ? o.items.reduce((t, i) => t + i.qty, 0) : 1, content_type: 'product', order_id: o.order_id },
     }],
     ...(process.env.META_TEST_EVENT_CODE ? { test_event_code: process.env.META_TEST_EVENT_CODE } : {}),
   };
