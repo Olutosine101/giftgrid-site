@@ -9,8 +9,21 @@ exports.handler = async event => {
   let b;
   try { b = JSON.parse(event.body || '{}'); } catch { return json(400, { message: 'Bad request' }); }
 
-  const box = catalog[b.box];
-  if (!box) return json(400, { message: 'That box is not available online. Please chat with us.' });
+  // cart: items = [{ box, qty }]; older pages send a single { box }
+  const raw = Array.isArray(b.items) && b.items.length ? b.items : b.box ? [{ box: b.box, qty: 1 }] : [];
+  if (!raw.length) return json(400, { message: 'Your cart is empty.' });
+  if (raw.length > 25) return json(400, { message: 'That is a big order. Please chat with us and we will put it together for you.' });
+  const items = [];
+  for (const it of raw) {
+    const id = String(it && it.box || ''), box = Object.prototype.hasOwnProperty.call(catalog, id) ? catalog[id] : null, qty = Number(it && it.qty);
+    if (!box) return json(400, { message: 'One of the boxes in your cart is not available online. Please chat with us.' });
+    if (!Number.isInteger(qty) || qty < 1 || qty > 50) return json(400, { message: 'Please choose between 1 and 50 of each box. For bigger orders, chat with us.' });
+    const same = items.find(x => x.id === id);
+    if (same) { same.qty += qty; if (same.qty > 50) return json(400, { message: 'Please choose between 1 and 50 of each box. For bigger orders, chat with us.' }); }
+    else items.push({ id, name: box.name, price: box.price, qty });
+  }
+  const subtotal = items.reduce((t, x) => t + x.price * x.qty, 0);
+  const boxNames = items.map(x => (x.qty > 1 ? x.qty + ' × ' : '') + x.name).join(', ');
   const email = clean(b.buyer_email, 120);
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return json(400, { message: 'Please enter a valid email.' });
   if (!clean(b.buyer_name) || !phoneOk(b.buyer_phone) || !clean(b.recipient_name) || !phoneOk(b.recipient_phone))
@@ -27,10 +40,10 @@ exports.handler = async event => {
   const q = await quote({ lat, lng, address: b.address, zone: b.zone });
   if (!q.ok) return json(400, { message: q.message || 'We cannot deliver to that address online. Please chat with us.' });
 
-  const total = box.price + q.fee;
+  const total = subtotal + q.fee;
   const orderId = 'GG-' + Date.now().toString(36).toUpperCase().slice(-6);
   const order = {
-    order_id: orderId, box_id: b.box, box_name: box.name, box_price: box.price, delivery_fee: q.fee, delivery_provider: q.provider, delivery_label: q.label || '', quote_ref: q.ref || null,
+    order_id: orderId, items, box_id: items[0].id, box_name: boxNames, box_price: subtotal, delivery_fee: q.fee, delivery_provider: q.provider, delivery_label: q.label || '', quote_ref: q.ref || null,
     buyer_name: clean(b.buyer_name), buyer_phone: clean(b.buyer_phone, 20), buyer_email: email,
     recipient_name: clean(b.recipient_name), recipient_phone: clean(b.recipient_phone, 20),
     address: clean(b.address), address_extra: clean(b.address_extra), lat: lat ?? q.lat ?? null, lng: lng ?? q.lng ?? null, zone: clean(b.zone, 60),
@@ -52,7 +65,7 @@ exports.handler = async event => {
         metadata: {
           order,
           custom_fields: [
-            { display_name: 'Box', variable_name: 'box', value: box.name },
+            { display_name: items.length > 1 || items[0].qty > 1 ? 'Boxes' : 'Box', variable_name: 'box', value: boxNames },
             { display_name: 'Recipient', variable_name: 'recipient', value: `${order.recipient_name} (${order.recipient_phone})` },
             { display_name: 'Delivery', variable_name: 'delivery', value: `${order.date} ${order.slot}` },
             { display_name: 'Address', variable_name: 'address', value: order.address },

@@ -21,8 +21,11 @@ exports.handler = async event => {
   const o = d.metadata && d.metadata.order;
   if (!o) return { statusCode: 200, body: 'no order' };
   const paid = d.amount / 100;
-  const box = catalog[o.box_id];
-  if (!box || paid < box.price + Number(o.delivery_fee || 0)) { console.error('Amount mismatch', o.order_id, paid); return { statusCode: 200, body: 'flagged' }; }
+  // expected amount from the server price list, never from the browser
+  const lines = Array.isArray(o.items) && o.items.length ? o.items : [{ id: o.box_id, qty: 1 }];
+  const known = lines.every(l => Object.prototype.hasOwnProperty.call(catalog, l.id) && Number.isInteger(l.qty) && l.qty > 0);
+  const due = known ? lines.reduce((t, l) => t + catalog[l.id].price * l.qty, 0) + Number(o.delivery_fee || 0) : Infinity;
+  if (!known || paid < due) { console.error('Amount mismatch', o.order_id, paid); return { statusCode: 200, body: 'flagged' }; }
 
   // Optional: book the Chowdeck rider automatically (set CHOWDECK_AUTO_BOOK=true in Netlify)
   if (process.env.CHOWDECK_AUTO_BOOK === 'true' && chowdeck.enabled() && o.lat != null) {

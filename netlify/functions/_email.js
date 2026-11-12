@@ -13,7 +13,7 @@ async function send({ to, subject, html, replyTo }) {
   if (!r.ok) console.error('Email failed', r.status, await r.text());
 }
 
-const row = (k, v) => v ? `<tr><td style="padding:6px 0;color:#6b7563;width:42%">${k}</td><td style="padding:6px 0;color:#16260F">${esc(v)}</td></tr>` : '';
+const row = (k, v) => v ? `<tr><td style="padding:6px 0;color:#6b7563;width:42%">${k}</td><td style="padding:6px 0;color:#16260F">${esc(v).replace(/\n/g, '<br>')}</td></tr>` : '';
 const shell = (title, body) => `<!doctype html><html><body style="margin:0;background:#F4F1E8;font-family:Arial,Helvetica,sans-serif">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F4F1E8;padding:24px 12px"><tr><td align="center">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:16px;overflow:hidden">
@@ -25,12 +25,13 @@ ${body}
 <tr><td style="padding:18px 28px;background:#F4F1E8;color:#6b7563;font-size:12px">GiftGrid · Lagos · giftgrid.com.ng · WhatsApp +234 808 944 0743 · Questions? Just reply to this email.</td></tr>
 </table></td></tr></table></body></html>`;
 
+const multi = o => Array.isArray(o.items) && (o.items.length > 1 || o.items[0].qty > 1);
 function details(o, paid, team) {
   return `<table role="presentation" width="100%" style="border-collapse:collapse;font-size:14px;margin:8px 0 18px">
-${row('Order', o.order_id)}${row('Box', o.box_name)}${row('Recipient', `${o.recipient_name} · ${o.recipient_phone}`)}
+${row('Order', o.order_id)}${multi(o) ? row('Boxes', (o.items || []).map(i => `${i.qty} × ${i.name}`).join('\n')) : row('Box', o.box_name)}${row('Recipient', `${o.recipient_name} · ${o.recipient_phone}`)}
 ${row('Address', [o.address, o.address_extra].filter(Boolean).join(', '))}${row('Delivery', `${o.date}, ${o.slot}`)}
 ${row('Backup contact', o.backup_contact)}${team ? row('Rider', o.chowdeck) : ''}${row('Card message', o.card_message)}${row('Instructions', o.instructions)}${team ? row('Heard about us', [o.heard_from, o.utm].filter(Boolean).join(' · ')) : ''}
-${row('Box price', naira(o.box_price))}${row('Delivery fee', naira(o.delivery_fee) + (o.delivery_label ? ` (${o.delivery_label})` : ''))}
+${row(multi(o) ? 'Boxes subtotal' : 'Box price', naira(o.box_price))}${row('Delivery fee', naira(o.delivery_fee) + (o.delivery_label ? ` (${o.delivery_label})` : ''))}
 <tr><td style="padding:10px 0 0;font-weight:bold;color:#16260F">Total paid</td><td style="padding:10px 0 0;font-weight:bold;color:#16260F">${naira(paid)}</td></tr></table>`;
 }
 
@@ -44,7 +45,7 @@ async function customerReceipt(o, paid) {
 }
 async function teamAlert(o, paid) {
   const intl = p => { const d = String(p || '').replace(/\D/g, ''); return d.startsWith('234') ? d : d.startsWith('0') ? '234' + d.slice(1) : d; };
-  const ask = `Hi ${o.buyer_name.split(' ')[0]}, your GiftGrid ${o.box_name.replace(/^The /, '')} has been delivered. Thank you for choosing us! If you have a minute, a quick Google review would mean a lot: ${C.REVIEW_URL}`;
+  const ask = `Hi ${o.buyer_name.split(' ')[0]}, your GiftGrid ${multi(o) ? 'gifts have' : o.box_name.replace(/^The /, '') + ' has'} been delivered. Thank you for choosing us! If you have a minute, a quick Google review would mean a lot: ${C.REVIEW_URL}`;
   const review = `<p><a href="https://wa.me/${intl(o.buyer_phone)}?text=${encodeURIComponent(ask)}">After delivery: send ${esc(o.buyer_name.split(' ')[0])} the review request on WhatsApp</a></p>`;
   const map = o.lat ? `<p><a href="https://www.google.com/maps?q=${o.lat},${o.lng}">Open the drop-off in Google Maps</a></p>` : '';
   await send({
