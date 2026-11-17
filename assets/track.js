@@ -23,14 +23,20 @@ window.GG_ANALYTICS = { ga4: 'G-0399B8N0YM', metaPixel: '1436805018597129' };
   var cookie = function (n) { var m = document.cookie.match('(?:^|; )' + n + '=([^;]*)'); return m ? decodeURIComponent(m[1]) : ''; };
   var ga = function (name, p) { try { window.gtag && gtag('event', name, p); } catch (e) {} };
   var fb = function (name, p, id, custom) { try { window.fbq && fbq(custom ? 'trackCustom' : 'track', name, p, id ? { eventID: id } : undefined); } catch (e) {} };
-  var item = function (b) { return { item_id: b.slug, item_name: b.name, item_category: b.cat, price: b.price, quantity: 1 }; };
+  var item = function (b) { return { item_id: b.slug, item_name: b.name, item_category: b.cat, price: b.price, quantity: b.qty || 1 }; };
+  // each event takes one box or a list of cart lines ({ slug, name, cat, price, qty })
+  var L = function (b) { return [].concat(b); };
+  var val = function (b) { return L(b).reduce(function (t, x) { return t + x.price * (x.qty || 1); }, 0); };
+  var ids = function (b) { return L(b).map(function (x) { return x.slug; }); };
+  var n = function (b) { return L(b).reduce(function (t, x) { return t + (x.qty || 1); }, 0); };
 
   // One place for every conversion event, so GA4 and Meta always agree.
   window.ggTrack = {
-    view: function (b) { ga('view_item', { currency: 'NGN', value: b.price, items: [item(b)] }); fb('ViewContent', { content_ids: [b.slug], content_name: b.name, content_type: 'product', value: b.price, currency: 'NGN' }); },
-    checkout: function (b) { ga('begin_checkout', { currency: 'NGN', value: b.price, items: [item(b)] }); fb('InitiateCheckout', { content_ids: [b.slug], content_type: 'product', value: b.price, currency: 'NGN', num_items: 1 }); },
-    pay: function (b, total) { ga('add_payment_info', { currency: 'NGN', value: total, items: [item(b)] }); fb('AddPaymentInfo', { content_ids: [b.slug], value: total, currency: 'NGN' }); },
-    purchase: function (b, total, orderId) { ga('purchase', { transaction_id: orderId, currency: 'NGN', value: total, items: [item(b)] }); fb('Purchase', { content_ids: [b.slug], content_type: 'product', value: total, currency: 'NGN' }, orderId); },
+    view: function (b) { ga('view_item', { currency: 'NGN', value: val(b), items: L(b).map(item) }); fb('ViewContent', { content_ids: ids(b), content_name: L(b)[0].name, content_type: 'product', value: val(b), currency: 'NGN' }); },
+    add: function (b) { ga('add_to_cart', { currency: 'NGN', value: val(b), items: L(b).map(item) }); fb('AddToCart', { content_ids: ids(b), content_name: L(b)[0].name, content_type: 'product', value: val(b), currency: 'NGN' }); },
+    checkout: function (b) { ga('begin_checkout', { currency: 'NGN', value: val(b), items: L(b).map(item) }); fb('InitiateCheckout', { content_ids: ids(b), content_type: 'product', value: val(b), currency: 'NGN', num_items: n(b) }); },
+    pay: function (b, total) { ga('add_payment_info', { currency: 'NGN', value: total, items: L(b).map(item) }); fb('AddPaymentInfo', { content_ids: ids(b), value: total, currency: 'NGN' }); },
+    purchase: function (b, total, orderId) { ga('purchase', { transaction_id: orderId, currency: 'NGN', value: total, items: L(b).map(item) }); fb('Purchase', { content_ids: ids(b), content_type: 'product', value: total, currency: 'NGN', num_items: n(b) }, orderId); },
     lead: function (kind) { ga('generate_lead', { lead_source: kind }); fb('Lead', { content_name: kind }); },
     contact: function (where) { ga('contact', { method: 'whatsapp', location: where }); fb('Contact', { content_name: where }); },
     ids: function () { return { fbp: cookie('_fbp'), fbc: cookie('_fbc') || (/[?&]fbclid=([^&]+)/.test(location.search) ? 'fb.1.' + Date.now() + '.' + RegExp.$1 : '') }; },

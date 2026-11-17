@@ -1,4 +1,4 @@
-// Box prices the server trusts. Keep in sync with COLLECTION in index.html.
+// Box prices the server trusts. Keep in sync with COLLECTION in assets/order.js.
 // The browser only sends the box id; the price always comes from here.
 module.exports = {
   "continental-royalty": {
@@ -50,5 +50,65 @@ module.exports = {
     "name": "Love Language Box",
     "price": 75000,
     "category": "Romance"
+  },
+  "staff-starter": {
+      "name": "Staff Starter Pack",
+      "price": 34000,
+      "category": "Corporate"
+  },
+  "staff-plus": {
+      "name": "Staff Plus Pack",
+      "price": 69500,
+      "category": "Corporate"
+  },
+  "staff-gold": {
+      "name": "Staff Gold Hamper",
+      "price": 103000,
+      "category": "Corporate"
+  },
+  "executive-hamper": {
+      "name": "Executive Hamper",
+      "price": 158500,
+      "category": "Corporate"
+  },
+  "office-snack-crate": {
+      "name": "Office Snack Crate",
+      "price": 67500,
+      "category": "Corporate"
+  },
+  "christmas-store-up": {
+      "name": "Christmas Store-Up Hamper",
+      "price": 207500,
+      "category": "Christmas"
+  },
+  "chicken-jollof": {
+      "name": "Christmas Chicken & Jollof Box (Whole frozen chicken)",
+      "price": 78500,
+      "category": "Christmas"
+  },
+  "chicken-jollof-smoked": {
+      "name": "Christmas Chicken & Jollof Box (Smoked chicken)",
+      "price": 78500,
+      "category": "Christmas"
+  },
+  "ramadan-iftar": {
+      "name": "Ramadan & Sallah Iftar Box",
+      "price": 71500,
+      "category": "Festive"
+  },
+  "breakfast-provisions": {
+      "name": "Breakfast Provisions Box",
+      "price": 51000,
+      "category": "Pantry"
+  },
+  "new-mum-care": {
+      "name": "New Mum Care Box",
+      "price": 69500,
+      "category": "Care"
+  },
+  "get-well-recovery": {
+      "name": "Get Well Recovery Box",
+      "price": 46000,
+      "category": "Care"
   }
 };

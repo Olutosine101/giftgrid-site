@@ -26,6 +26,30 @@ const COLLECTION = [
     items: 'Nescafé Gold, Nescafé Cappuccino, Coffee-mate, Lipton Yellow Label tea, McVitie’s Hobnobs chocolate chip, TUC crackers, Didian crackers, Hajor date powder' },
   { cat: 'Romance', name: 'Love Language Box', price: '₦75,000', img: 'love-language', cut: 'pkgc-love-language', pack: 'Black gift box',
     items: 'Four Cousins Natural Sweet Red in a jute bag, Ferrero Rocher, chocolate truffles, a scented candle, fresh red roses, a personal message card' },
+  { cat: 'Corporate', name: 'Staff Starter Pack', price: '₦34,000', img: 'staff-starter', cut: 'pkgc-staff-starter', pack: 'Non-woven gift bag',
+    items: 'Big Bull rice 5kg, Power oil 75cl, Golden Penny spaghetti ×2, Indomie noodles ×5, Gino Tomato Mix, Knorr cubes, Dangote salt, Tiger curry, Ground pepper' },
+  { cat: 'Corporate', name: 'Staff Plus Pack', price: '₦69,500', img: 'staff-plus', cut: 'pkgc-staff-plus', pack: 'Black cloth tote',
+    items: 'Royal Stallion rice 5kg, King\'s vegetable oil 2L, Golden Penny spaghetti ×3, Indomie noodles ×10, Peak milk 360g, Milo 400g, Golden Penny sugar 1kg, Lipton tea (25 bags), Gino tomato paste, Knorr cubes, Dangote salt, Tiger curry, Ducros thyme, Ground pepper' },
+  { cat: 'Corporate', name: 'Staff Gold Hamper', price: '₦103,000', img: 'staff-gold', cut: 'pkgc-staff-gold', pack: 'Large black cloth bag',
+    items: 'Royal Stallion rice 10kg, King\'s vegetable oil 3L, Golden Penny spaghetti ×4, Indomie noodles ×20, Peak milk, Milo, Lipton tea, Golden Penny sugar, Gino tomato paste, Knorr cubes ×50, Titus sardines ×2, Chivita 1L, Dangote salt, Tiger curry, Ducros thyme, Ground pepper' },
+  { cat: 'Corporate', name: 'Executive Hamper', price: '₦158,500', img: 'executive-hamper', cut: 'pkgc-executive-hamper', pack: 'Wicker hamper basket',
+    items: 'Four Cousins Natural Sweet Red (18+), Ferrero Rocher (16 pieces), Nescafé Gold, M&W honey roasted cashews, Pringles ×2, McVitie\'s chocolate digestives, Kadab honey, Royal Stallion rice 5kg, Chivita 1L, Kellogg\'s Corn Flakes 900g, Peak milk tin, Tiger curry, Ducros thyme' },
+  { cat: 'Corporate', name: 'Office Snack Crate', price: '₦67,500', img: 'office-snack-crate', cut: 'pkgc-office-snack-crate', pack: 'Wooden crate',
+    items: 'Pringles ×3, Coca-Cola cans ×6, Chivita Active ×12, Zifort biscuits ×4, Nadis cashew nuts, McVitie\'s digestives ×4' },
+  { cat: 'Christmas', name: 'Christmas Store-Up Hamper', price: '₦207,500', img: 'christmas-store-up', cut: 'pkgc-christmas-store-up', pack: 'Carton and two cloth bags',
+    items: 'Royal Stallion rice 25kg, King\'s vegetable oil 5L, Golden Penny Semovita 5kg, Golden Penny spaghetti ×10, Indomie carton (40 packs), Oloyin beans, Garri 5kg, Gino tomato paste ×2, Knorr cubes ×50, Peak milk 800g, Milo 800g, Dangote sugar, Crate of eggs (30), Dangote salt, Tiger curry, Ducros thyme, Ground pepper' },
+  { cat: 'Christmas', name: 'Christmas Chicken & Jollof Box', price: '₦78,500', img: 'chicken-jollof', cut: 'pkgc-chicken-jollof', pack: 'Insulated cooler bag with ice packs', group: 'chicken-jollof', variant: 'Whole frozen chicken',
+    items: 'Fiesta whole frozen chicken (about 1.8kg), Royal Stallion rice 5kg, King\'s vegetable oil 2L, Gino tomato paste ×2, Gino Party Jollof seasoning ×2, Fresh pepper and tomato pack with onions, Knorr cubes, Dangote salt, Tiger curry, Ducros thyme, Ground pepper, Chivita 1L' },
+  { cat: 'Christmas', name: 'Christmas Chicken & Jollof Box', price: '₦78,500', img: 'chicken-jollof-smoked', cut: 'pkgc-chicken-jollof-smoked', pack: 'Insulated cooler bag with ice packs', group: 'chicken-jollof', variant: 'Smoked chicken', hide: true,
+    items: 'Chi smoked chicken (about 1kg), Royal Stallion rice 5kg, King\'s vegetable oil 2L, Gino tomato paste ×2, Gino Party Jollof seasoning ×2, Fresh pepper and tomato pack with onions, Knorr cubes, Dangote salt, Tiger curry, Ducros thyme, Ground pepper, Chivita 1L' },
+  { cat: 'Festive', name: 'Ramadan & Sallah Iftar Box', price: '₦71,500', img: 'ramadan-iftar', cut: 'pkgc-ramadan-iftar', pack: 'Kraft gift box',
+    items: 'Dates, Lipton tea, Peak milk, Golden Penny sugar, Quaker oats, Checkers custard, Tiger nuts, Royal Stallion rice 5kg, King\'s vegetable oil 1L, Chivita 1L, Dangote salt, Tiger curry, Ducros thyme, Ground pepper' },
+  { cat: 'Pantry', name: 'Breakfast Provisions Box', price: '₦51,000', img: 'breakfast-provisions', cut: 'pkgc-breakfast-provisions', pack: 'Kraft gift box',
+    items: 'Kellogg\'s Corn Flakes 325g, Golden Morn 800g, Quaker oats, Peak milk tin, Milo 400g, Lipton tea, Golden Penny sugar, Chocoh chocolate spread, Chivita 1L' },
+  { cat: 'Care', name: 'New Mum Care Box', price: '₦69,500', img: 'new-mum-care', cut: 'pkgc-new-mum-care', pack: 'Kraft gift box',
+    items: 'Quaker oats, Golden Morn, Peak milk, Milo, Checkers custard, Kadab honey, Dates, Molfix diapers (size 2), Molfix baby wipes, Dettol, Chivita 1L' },
+  { cat: 'Care', name: 'Get Well Recovery Box', price: '₦46,000', img: 'get-well-recovery', cut: 'pkgc-get-well-recovery', pack: 'Rattan tray',
+    items: 'Lucozade 1L, Glucose-D, Quaker oats, Honey, Lipton tea, McVitie\'s digestives, Chivita 1L, Fresh fruit' },
   { cat: 'Custom', name: 'Curate a Custom Box', price: 'Your budget', custom: true, pack: 'Any box in the collection',
     items: 'You pick the occasion, budget and items, we source them in Nigeria, pack them beautifully and deliver' },
 ];
@@ -59,17 +83,19 @@ document.body.insertAdjacentHTML('beforeend', `<div class="mdl" id="mdl" role="d
       <span class="mdl-cat" id="mdlCat"></span>
       <h3 id="mdlTitle"></h3>
       <p class="mdl-pack" id="mdlPack"></p><a class="mdl-more" id="mdlMore" href="/boxes/">See full details</a>
+      <div class="variant" id="mdlVar" role="radiogroup" aria-label="Choose an option" hidden></div>
       <ul class="mdl-list" id="mdlList"></ul>
       <div class="mdl-sum" id="mdlSum"></div>
       <ul class="mdl-rules" id="mdlRules"></ul>
       <div class="mdl-acts" id="mdlActs">
-        <button class="mdl-go" id="mdlBuy" type="button">Get this now</button>
+        <div class="gg-add gg-add-mdl" id="mdlAdd" data-add=""></div>
+        <button class="mdl-go" id="mdlBuy" type="button">Buy now</button>
         <a class="mdl-alt" id="mdlChat" href="https://wa.me/2348089440743" target="_blank" rel="noopener">Chat with a human</a>
       </div>
     </div>
     <!-- checkout -->
     <form class="mdl-body co" id="coForm" hidden novalidate>
-      <button class="co-back" type="button" id="coBack">Back to box</button>
+      <button class="co-back" type="button" id="coBack">Back to cart</button>
       <span class="mdl-cat">Checkout</span>
       <h3 id="coTitle">Send this box</h3>
       <fieldset><legend>Your details</legend>
@@ -108,10 +134,23 @@ document.body.insertAdjacentHTML('beforeend', `<div class="mdl" id="mdl" role="d
         <span class="co-secure">Secure payment by Paystack</span>
       </div>
     </form>
+    <!-- cart -->
+    <div class="mdl-body co-cart" id="coCart" hidden>
+      <span class="mdl-cat">Your cart</span>
+      <h3>Your gifts</h3>
+      <div class="cart-list" id="cartList"></div>
+      <div class="mdl-sum" id="cartSum"></div>
+      <p class="cart-note" id="cartNote">Everything in one order goes to one address. Sending to different people? Place one order per address.</p>
+      <div class="mdl-acts" id="cartActs">
+        <button class="mdl-go" id="cartGo" type="button">Checkout</button>
+        <button class="mdl-alt" type="button" id="cartMore">Keep shopping</button>
+      </div>
+    </div>
     <!-- pick a box (other pages) -->
     <div class="mdl-body co-pick" id="coPick" hidden>
       <span class="mdl-cat">The collection</span>
       <h3>Choose a gift box</h3>
+      <button class="co-back" type="button" id="pickCart" hidden>View cart</button>
       <div class="pick-grid" id="pickGrid"></div>
     </div>
     <!-- done -->
@@ -128,15 +167,96 @@ document.body.insertAdjacentHTML('beforeend', `<div class="mdl" id="mdl" role="d
   const naira = n => '₦' + Math.round(n).toLocaleString('en-NG');
   const num = p => { const v = parseInt(String(p).replace(/[^0-9]/g, ''), 10); return isNaN(v) ? null : v; };
   const esc = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;');
-  const views = { info: document.querySelector('.mdl-body:not(.co):not(.co-done):not(.co-pick)'), co: $('coForm'), done: $('coDone'), pick: $('coPick') };
+  const views = { info: document.querySelector('.mdl-body:not(.co):not(.co-done):not(.co-pick):not(.co-cart)'), co: $('coForm'), done: $('coDone'), pick: $('coPick'), cart: $('coCart') };
   const show = v => { const c = m.querySelector('.mdl-card'); Object.entries(views).forEach(([k, el]) => { el.hidden = k !== v; el.scrollTop = 0; }); c.scrollTop = 0; c.dataset.view = v; };
   const wa = msg => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
   // analytics (GA4 + Meta Pixel via /assets/track.js); silent when not configured
-  const gg = (ev, value, id) => { try { if (!window.ggTrack || !box || box.custom) return; const b = { slug: box.img, name: box.name, cat: box.cat, price: num(box.price) }; ev === 'view' ? ggTrack.view(b) : ev === 'checkout' ? ggTrack.checkout(b) : ev === 'pay' ? ggTrack.pay(b, value) : ggTrack.purchase(b, value, id); } catch (e) {} };
+  const tb = (b, qty) => ({ slug: b.img, name: b.name + (b.variant ? ' (' + b.variant + ')' : ''), cat: b.cat, price: num(b.price), qty: qty || 1 });
+  const gg = (ev, value, id, lines) => { try {
+    if (!window.ggTrack) return;
+    if (ev === 'view' || ev === 'add') { if (!box || box.custom) return; return ev === 'view' ? ggTrack.view(tb(box)) : ggTrack.add && ggTrack.add(tb(box, value)); }
+    const list = (lines || Cart.lines()).map(l => tb(l.box, l.qty)); if (!list.length) return;
+    ev === 'checkout' ? ggTrack.checkout(list) : ev === 'pay' ? ggTrack.pay(list, value) : ggTrack.purchase(list, value, id);
+  } catch (e) {} };
   const PREVIEW = !/^https?:$/.test(location.protocol) || /claude|anthropic|usercontent|localhost|127\.0\.0\.1/.test(location.hostname);
   // WhatsApp links always open outside the page: inside a frame or preview, wa.me can't load in place
   ['mdlChat', 'coDoneChat'].forEach(id => { $(id).target = '_blank'; $(id).rel = 'noopener'; });
   let last = null, box = null, quote = null, mapsReady = null, place = null;
+  const bySlug = s => COLLECTION.findIndex(b => b.img === s);
+
+  /* ---------------- cart (saved in this browser) ---------------- */
+  const MAXQ = 50;
+  const Cart = (() => {
+    let lines = [];
+    const load = () => { try { lines = (JSON.parse(localStorage.getItem('gg_cart') || '[]') || []).filter(l => l && bySlug(l.slug) > -1 && l.qty > 0).map(l => ({ slug: l.slug, qty: Math.min(MAXQ, l.qty | 0) })); } catch (e) { lines = []; } };
+    load();
+    const save = () => { try { localStorage.setItem('gg_cart', JSON.stringify(lines)); } catch (e) {} };
+    const qty = slug => { const l = lines.find(l => l.slug === slug); return l ? l.qty : 0; };
+    const set = (slug, n) => {
+      if (bySlug(slug) < 0) return;
+      n = Math.max(0, Math.min(MAXQ, n | 0));
+      const l = lines.find(l => l.slug === slug);
+      if (!n) lines = lines.filter(x => x.slug !== slug); else if (l) l.qty = n; else lines.push({ slug, qty: n });
+      save(); render();
+    };
+    return {
+      qty, set, add: (slug, n) => set(slug, qty(slug) + (n || 1)),
+      groupQty: g => lines.reduce((t, l) => t + (COLLECTION[bySlug(l.slug)].group === g ? l.qty : 0), 0),
+      lines: () => lines.map(l => ({ slug: l.slug, qty: l.qty, box: COLLECTION[bySlug(l.slug)] })),
+      count: () => lines.reduce((t, l) => t + l.qty, 0),
+      subtotal: () => lines.reduce((t, l) => t + l.qty * num(COLLECTION[bySlug(l.slug)].price), 0),
+      clear: () => { lines = []; save(); render(); },
+      reload: () => { load(); render(); },
+    };
+  })();
+  const label = b => b.name + (b.variant ? ' · ' + b.variant : '');
+  function stepper(el) {
+    const slug = el.getAttribute('data-add'), i = bySlug(slug), b = COLLECTION[i];
+    if (!b) { el.innerHTML = ''; return; }
+    const card = el.classList.contains('gg-add-card');
+    if (card && b.group) {   // a box with options: choose in the pop-up
+      const n = Cart.groupQty(b.group);
+      el.innerHTML = `<button type="button" class="ga-add${n ? ' ga-in' : ''}" data-act="pick">${n ? n + ' in cart · Change' : 'Choose &amp; add'}</button>`;
+      return;
+    }
+    const q = Cart.qty(slug), nm = esc(label(b));
+    el.innerHTML = q
+      ? `<div class="ga-step" role="group" aria-label="${nm} in cart"><button type="button" data-act="dec" aria-label="Remove one ${nm}">${q === 1 ? '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m-8 0 1 13h8l1-13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>' : '−'}</button><output aria-live="polite">${q}</output><button type="button" data-act="inc" aria-label="Add one more ${nm}"${q >= MAXQ ? ' disabled' : ''}>+</button></div>`
+      : `<button type="button" class="ga-add" data-act="inc">Add to cart</button>`;
+  }
+  const BAG = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M5 8h14l-1.2 12H6.2L5 8Zm4 0V6a3 3 0 0 1 6 0v2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
+  document.body.insertAdjacentHTML('beforeend', `<button type="button" class="gg-fab" id="ggFab" hidden>${BAG}<span class="gg-fab-n" id="ggFabN">0</span><span class="gg-fab-t" id="ggFabT"></span></button>`);
+  function render() {
+    document.querySelectorAll('[data-add]').forEach(stepper);
+    const n = Cart.count(), fab = $('ggFab');
+    fab.hidden = !n; $('ggFabN').textContent = n; $('ggFabT').textContent = n ? naira(Cart.subtotal()) : '';
+    fab.setAttribute('aria-label', `View cart: ${n} item${n === 1 ? '' : 's'}, ${naira(Cart.subtotal())}`);
+    if (box && !box.custom && m.querySelector('.mdl-card').dataset.view === 'info') {
+      const q = Cart.qty(box.img);
+      $('mdlBuy').textContent = n ? `Checkout · ${naira(Cart.subtotal())}` : 'Buy now';
+    }
+    $('pickCart').hidden = !n; $('pickCart').textContent = `View cart (${n})`;
+    if (m.querySelector('.mdl-card').dataset.view === 'cart') renderCart();
+  }
+  function renderCart() {
+    const ls = Cart.lines();
+    $('cartList').innerHTML = ls.length ? ls.map(l => `<div class="cl">`
+      + `<span class="cl-img"><img src="${IMG}${l.box.cut}.webp" alt="" loading="lazy"></span>`
+      + `<div class="cl-t"><b>${esc(l.box.name)}</b><small>${l.box.variant ? esc(l.box.variant) + ' · ' : ''}${naira(num(l.box.price))} each</small></div>`
+      + `<div class="gg-add gg-add-sm" data-add="${l.slug}"></div><span class="cl-p">${naira(num(l.box.price) * l.qty)}</span></div>`).join('')
+      : '<p class="cart-empty">Your cart is empty. Add a gift box to get started.</p>';
+    $('cartList').querySelectorAll('[data-add]').forEach(stepper);
+    $('cartSum').innerHTML = ls.length ? `<div class="r tot"><span>Subtotal · ${Cart.count()} item${Cart.count() === 1 ? '' : 's'}</span><span>${naira(Cart.subtotal())}</span></div><div class="r muted"><span>Delivery</span><span>Calculated at checkout</span></div>` : '';
+    $('cartSum').hidden = !ls.length; $('cartNote').hidden = !ls.length;
+    $('cartGo').hidden = !ls.length;
+    $('cartMore').textContent = ls.length ? 'Keep shopping' : 'See the boxes';
+  }
+  function openCart() {
+    if (!m.classList.contains('open')) last = document.activeElement;
+    box = null; renderCart(); show('cart');
+    m.classList.add('open'); m.setAttribute('aria-hidden', 'false'); document.documentElement.style.overflow = 'hidden';
+    setTimeout(() => m.querySelector('.mdl-x').focus(), 50);
+  }
 
   /* ---------------- info view ---------------- */
   function open(i, opts) {
@@ -156,11 +276,15 @@ document.body.insertAdjacentHTML('beforeend', `<div class="mdl" id="mdl" role="d
     $('mdlRules').innerHTML = DELIVERY.rules.map(r => `<li>${esc(r)}</li>`).join('');
     const msg = box.custom ? 'Hi GiftGrid, I would like to curate a custom box.' : `Hi GiftGrid, I have a question about the ${box.name.replace(/^The /, '')} (${box.price}).`;
     $('mdlChat').href = wa(msg);
-    $('mdlBuy').hidden = !!box.custom;
+    $('mdlBuy').hidden = !!box.custom; $('mdlAdd').hidden = !!box.custom;
+    $('mdlAdd').setAttribute('data-add', box.custom ? '' : box.img);
+    const vs = box.group ? COLLECTION.map((b, j) => [b, j]).filter(([b]) => b.group === box.group) : [];
+    $('mdlVar').hidden = !vs.length;
+    $('mdlVar').innerHTML = vs.map(([b, j]) => `<button type="button" role="radio" aria-checked="${j === i}" data-vi="${j}">${esc(b.variant)}</button>`).join('');
     $('mdlChat').classList.toggle('solo', !!box.custom);   // custom box: WhatsApp is the only (primary) action
     $('mdlChat').textContent = box.custom ? 'Start on WhatsApp' : 'Chat with a human';
     $('coBackPick').hidden = !opts.fromPick;
-    show('info');
+    show('info'); render();
     if (opts.checkout && !box.custom) toCheckout();
     m.classList.add('open'); m.setAttribute('aria-hidden', 'false'); document.documentElement.style.overflow = 'hidden';
     setTimeout(() => m.querySelector('.mdl-x').focus(), 50);
@@ -174,15 +298,19 @@ document.body.insertAdjacentHTML('beforeend', `<div class="mdl" id="mdl" role="d
   const lagosNow = () => new Date(new Date().toLocaleString('en-US', { timeZone: 'Africa/Lagos' }));
   const ymd = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   function minDate() { const n = lagosNow(); const d = new Date(n); d.setDate(d.getDate() + (n.getHours() < 12 ? 1 : 2)); return d; }
-  function slotsFor(b) {
-    return b.cat === 'Breakfast'
+  function slotsFor(ls) {
+    return ls.some(l => l.box.cat === 'Breakfast')
       ? ['7:30–8:30 a.m.', '8:30–9:30 a.m.', '9:30–11:00 a.m.']
       : ['9:00 a.m.–12:00 p.m.', '12:00–3:00 p.m.', '3:00–6:00 p.m.'];
   }
   function toCheckout() {
-    $('coTitle').textContent = 'Send the ' + box.name.replace(/^The /, '');
+    const ls = Cart.lines();
+    if (!ls.length) return openCart();
+    const n = Cart.count();
+    $('coTitle').textContent = n === 1 ? 'Send the ' + ls[0].box.name.replace(/^The /, '') : `Send ${n} gifts`;
     const md = minDate(); $('co_date').min = ymd(md); if (!$('co_date').value || $('co_date').value < ymd(md)) $('co_date').value = ymd(md);
-    $('co_slot').innerHTML = slotsFor(box).map(s => `<option>${s}</option>`).join('');
+    const keep = $('co_slot').value, sl = slotsFor(ls);
+    $('co_slot').innerHTML = sl.map(s => `<option${s === keep ? ' selected' : ''}>${s}</option>`).join('');
     if (!$('co_zone').options.length) {
       const groups = [...new Set(CHECKOUT.areas.map(a => a.group))];
       $('co_zone').innerHTML = '<option value="">Choose your area</option>' + groups.map(g => `<optgroup label="${esc(g)}">` + CHECKOUT.areas.filter(a => a.group === g).map(a => `<option value="${a.id}">${esc(a.name)} · ${naira(a.fee)}</option>`).join('') + '</optgroup>').join('');
@@ -195,9 +323,9 @@ document.body.insertAdjacentHTML('beforeend', `<div class="mdl" id="mdl" role="d
     gg('checkout');
   }
   function renderSum(pending) {
-    const price = num(box.price);
+    const ls = Cart.lines(), price = Cart.subtotal();
     const fee = quote ? quote.fee : null;
-    $('coSum').innerHTML = `<div class="r"><span>${esc(box.name)}</span><span>${naira(price)}</span></div>`
+    $('coSum').innerHTML = ls.map(l => `<div class="r"><span>${l.qty > 1 ? l.qty + ' × ' : ''}${esc(label(l.box))}</span><span>${naira(num(l.box.price) * l.qty)}</span></div>`).join('')
       + `<div class="r${fee == null ? ' muted' : ''}"><span>Delivery${quote && quote.label ? ' · ' + esc(quote.label) : ''}</span><span>${fee == null ? (pending || 'Choose your area') : naira(fee)}</span></div>`
       + `<div class="r tot"><span>Total</span><span>${fee == null ? naira(price) + ' + delivery' : naira(price + fee)}</span></div>`;
     $('coPay').textContent = fee == null ? 'Pay' : 'Pay ' + naira(price + fee);
@@ -322,7 +450,7 @@ document.body.insertAdjacentHTML('beforeend', `<div class="mdl" id="mdl" role="d
     const v = id => ($(id).value || '').trim();
     const self = $('co_self').checked;
     const d = {
-      box: box.img, buyer_name: v('co_name'), buyer_phone: v('co_phone'), buyer_email: v('co_email'),
+      items: Cart.lines().map(l => ({ box: l.slug, qty: l.qty })), box: (Cart.lines()[0] || {}).slug, buyer_name: v('co_name'), buyer_phone: v('co_phone'), buyer_email: v('co_email'),
       recipient_name: self ? v('co_name') : v('co_rname'), recipient_phone: self ? v('co_phone') : v('co_rphone'),
       address: place ? place.address : v('co_addr'), lat: place ? place.lat : null, lng: place ? place.lng : null,
       zone: quote && quote.zone || null, address_extra: v('co_addr2'), date: v('co_date'), slot: v('co_slot'),
@@ -348,7 +476,9 @@ document.body.insertAdjacentHTML('beforeend', `<div class="mdl" id="mdl" role="d
     e.preventDefault();
     const d = collect(); if (!d) return;
     const btn = $('coPay'); btn.disabled = true; btn.textContent = 'Starting payment…';
-    gg('pay', num(box.price) + (quote ? quote.fee : 0));
+    if (!Cart.count()) return openCart();
+    const bought = Cart.lines();
+    gg('pay', Cart.subtotal() + (quote ? quote.fee : 0));
     try {
       const r = await fetch(CHECKOUT.apiBase + '/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(d) });
       const j = await r.json().catch(() => ({}));
@@ -357,7 +487,7 @@ document.body.insertAdjacentHTML('beforeend', `<div class="mdl" id="mdl" role="d
       if (!window.PaystackPop) await new Promise((res, rej) => { const sc = document.createElement('script'); sc.src = 'https://js.paystack.co/v2/inline.js'; sc.onload = res; sc.onerror = () => rej(new Error('Paystack could not load. Check your connection and try again.')); document.head.appendChild(sc); });
       const pop = new PaystackPop();
       pop.resumeTransaction(j.access_code, {
-        onSuccess: tx => confirm(tx.reference || j.reference, d, j),
+        onSuccess: tx => confirm(tx.reference || j.reference, d, j, bought),
         onCancel: () => { btn.disabled = false; renderSum(); err('Payment was cancelled. Your details are still here when you are ready.'); },
         onError: x => { btn.disabled = false; renderSum(); err((x && x.message) || 'The payment did not go through. Please try again.'); },
       });
@@ -369,20 +499,38 @@ document.body.insertAdjacentHTML('beforeend', `<div class="mdl" id="mdl" role="d
       else err(m);
     }
   }
-  async function confirm(reference, d, j) {
+  async function confirm(reference, d, j, bought) {
     let v = null;
     try { const r = await fetch(CHECKOUT.apiBase + '/verify?reference=' + encodeURIComponent(reference)); v = await r.json(); } catch (e) {}
     const total = v && v.amount ? v.amount : (j.total || 0);
-    $('coDoneText').textContent = `We have emailed a receipt to ${d.buyer_email}. ${d.recipient_name} will receive the ${box.name.replace(/^The /, '')} on ${new Date(d.date + 'T12:00').toLocaleDateString('en-NG', { weekday: 'long', day: 'numeric', month: 'long' })}, ${d.slot}.`;
+    $('coDoneText').textContent = `We have emailed a receipt to ${d.buyer_email}. ${d.recipient_name} will receive ${bought.length === 1 && bought[0].qty === 1 ? 'the ' + bought[0].box.name.replace(/^The /, '') : 'their gifts'} on ${new Date(d.date + 'T12:00').toLocaleDateString('en-NG', { weekday: 'long', day: 'numeric', month: 'long' })}, ${d.slot}.`;
     $('coDoneSum').innerHTML = `<div class="r"><span>Order</span><span>${esc(j.order_id || reference)}</span></div><div class="r tot"><span>Paid</span><span>${naira(total)}</span></div>`;
     $('coDoneChat').href = wa(`Hi GiftGrid, about my order ${j.order_id || reference}.`);
     $('coPay').disabled = false;
-    gg('purchase', total, j.order_id || reference);
+    gg('purchase', total, j.order_id || reference, bought);
+    Cart.clear();
     show('done');
   }
 
-  $('mdlBuy').addEventListener('click', toCheckout);
-  $('coBack').addEventListener('click', () => show('info'));
+  $('mdlBuy').addEventListener('click', () => { if (box && !box.custom && !Cart.count()) { Cart.add(box.img); gg('add', 1); } toCheckout(); });
+  $('coBack').addEventListener('click', openCart);
+  $('cartGo').addEventListener('click', toCheckout);
+  $('cartMore').addEventListener('click', () => Cart.count() ? close() : openPicker());
+  $('pickCart').addEventListener('click', openCart);
+  $('ggFab').addEventListener('click', openCart);
+  $('mdlVar').addEventListener('click', e => { const b = e.target.closest('[data-vi]'); if (b) open(+b.dataset.vi, { fromPick: !$('coBackPick').hidden }); });
+  // add-to-cart buttons anywhere on the page (capture, so cards and rails underneath don't also react)
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('[data-add] [data-act]'); if (!btn) return;
+    e.preventDefault(); e.stopPropagation();
+    const el = btn.closest('[data-add]'), slug = el.getAttribute('data-add'), act = btn.dataset.act;
+    if (act === 'pick') return open(bySlug(slug));
+    const before = Cart.qty(slug);
+    Cart.set(slug, before + (act === 'inc' ? 1 : -1));
+    if (act === 'inc') { const keep = box; box = COLLECTION[bySlug(slug)]; gg('add', 1); box = keep; const f = $('ggFab'); f.classList.remove('bump'); void f.offsetWidth; f.classList.add('bump'); }
+    const nb = el.querySelector(`[data-act="${act}"]:not([disabled])`) || el.querySelector('button'); nb && nb.focus({ preventScroll: true });
+  }, true);
+  document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.closest && e.target.closest('[data-add]')) e.stopPropagation(); }, true);
   $('coForm').addEventListener('submit', pay);
   $('coForm').addEventListener('input', e => { if (e.target.getAttribute('aria-invalid') === 'true') e.target.setAttribute('aria-invalid', 'false'); });
   $('co_addr').addEventListener('input', () => { if (!$('coZoneWrap').hidden) return; place = null; });
@@ -393,10 +541,10 @@ document.body.insertAdjacentHTML('beforeend', `<div class="mdl" id="mdl" role="d
   function openPicker() {
     if (!m.classList.contains('open')) last = document.activeElement;
     box = null;
-    $('pickGrid').innerHTML = COLLECTION.map((b, i) => `<button type="button" class="pk${b.custom ? ' pk-custom' : ''}" data-pi="${i}">`
+    $('pickGrid').innerHTML = COLLECTION.map((b, i) => b.hide ? '' : `<button type="button" class="pk${b.custom ? ' pk-custom' : ''}" data-pi="${i}">`
       + (b.custom ? '<span class="pk-img"><span class="plus">+</span></span>' : `<span class="pk-img"><img src="${IMG}${b.cut}.webp" alt="" loading="lazy"></span>`)
       + `<span class="pk-cat">${esc(b.cat)}</span><b>${esc(b.name)}</b><span class="pk-p">${esc(b.price)}</span></button>`).join('');
-    show('pick');
+    show('pick'); render();
     m.classList.add('open'); m.setAttribute('aria-hidden', 'false'); document.documentElement.style.overflow = 'hidden';
     setTimeout(() => m.querySelector('.mdl-x').focus(), 50);
   }
@@ -406,13 +554,12 @@ document.body.insertAdjacentHTML('beforeend', `<div class="mdl" id="mdl" role="d
   addEventListener('keydown', e => { if (e.key === 'Escape' && m.classList.contains('open')) close(); });
 
   // order buttons on any page open the pop-up here instead of sending people to the homepage
-  const bySlug = s => COLLECTION.findIndex(b => b.img === s);
   document.addEventListener('click', e => {
     if (e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey) return;
     const a = e.target.closest('[data-box], [data-order], a[href="/#boxes"]');
     if (!a) return;
     const slug = a.getAttribute('data-box');
-    if (slug != null) { const i = bySlug(slug); if (i < 0) return; e.preventDefault(); open(i, { checkout: true }); }
+    if (slug != null) { const i = bySlug(slug); if (i < 0) return; e.preventDefault(); if (!Cart.qty(slug)) { Cart.add(slug); box = COLLECTION[i]; gg('add', 1); } open(i, { checkout: true }); }
     else { e.preventDefault(); openPicker(); }
   });
   // deep link: any page with ?box=<slug> opens that box
@@ -425,6 +572,16 @@ document.body.insertAdjacentHTML('beforeend', `<div class="mdl" id="mdl" role="d
     }
   } catch (e) {}
 
-  window.GGOrder = { COLLECTION, open, openPicker, close, bySlug };
+  document.querySelectorAll('a.card[href^="/boxes/"]').forEach(a => {
+    const slug = a.getAttribute('href').split('/')[2]; if (bySlug(slug) < 0) return;
+    const w = document.createElement('div'); w.className = a.className + ' has-add';
+    a.className = 'card-hit'; a.replaceWith(w); w.appendChild(a);
+    w.insertAdjacentHTML('beforeend', `<div class="gg-add gg-add-card" data-add="${slug}"></div>`);
+  });
+  render();
+  addEventListener('storage', e => { if (e.key === 'gg_cart') Cart.reload(); });
+
+  window.GGOrder = { COLLECTION, open, openPicker, openCart, close, bySlug };
+  window.GGCart = { add: Cart.add, set: Cart.set, qty: Cart.qty, count: Cart.count, render };
   window.__openBox = open;
 })();
