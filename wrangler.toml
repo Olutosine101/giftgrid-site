@@ -1,0 +1,6 @@
+# Cloudflare Pages settings. Secrets (Paystack, Resend, Chowdeck, Google, Meta) are set in the
+# Cloudflare dashboard: Pages project > Settings > Variables and Secrets, never in this file.
+name = "giftgrid"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-11-01"
+compatibility_flags = ["nodejs_compat"]

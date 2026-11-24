@@ -1,0 +1,2 @@
+# Old copy of the site lived in /giftgrid-more-pages/: send visits (and Google) to the real pages.
+/giftgrid-more-pages/* /:splat 301
